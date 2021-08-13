@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+/* eslint import/no-webpack-loader-syntax: off */
+import defaultValue from '!!raw-loader!./test.html'
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App defaultValue={defaultValue} />
   </React.StrictMode>,
   document.getElementById('root')
 );
