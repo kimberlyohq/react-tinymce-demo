@@ -40,7 +40,7 @@ import 'tinymce/plugins/autoresize'
 function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', }) {
   const rootRef = useRef()
   
-  const [editor, setEdtitor] = useState(null)
+  const [editor, setEditor] = useState(null)
   const [showLinkDialog, setShowLinkDialog] = useState(false)
 
   useEffect(() => {
@@ -103,7 +103,7 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
         editor.setDirty(false)
         editor.setMode(disabled ? 'readonly' : 'design')
         autoFocus && editor.focus()
-        setEdtitor(editor)
+        setEditor(editor);
       },
       setup: editor => {
         console.log('setup')
