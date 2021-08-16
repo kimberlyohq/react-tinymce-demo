@@ -103,7 +103,7 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
         editor.setDirty(false)
         editor.setMode(disabled ? 'readonly' : 'design')
         autoFocus && editor.focus()
-        setEdtitor(editor)
+        setEditor(editor);
       },
       setup: editor => {
         console.log('setup')
