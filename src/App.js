@@ -41,8 +41,8 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
   const rootRef = useRef()
   
   const [editor, setEdtitor] = useState(null)
-  const [showLinkDialog, setShowLinkDialog] = useState(false)
-
+  const linkDialogRef = useRef()
+  
   useEffect(() => {
 
     function example_image_upload_handler (blobInfo, success, failure, progress) {
@@ -111,6 +111,10 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
           text: 'edit link',
           
           onAction: () => {
+            const linkNode = editor.dom.getParents(editor.selection.getNode()).find(node => node.nodeName === 'A') 
+            const linkContent = linkNode.text
+            const linkHref = linkNode.getAttribute('href')
+            linkDialogRef.current.show(linkContent, linkHref)
 
           },
         });
@@ -307,13 +311,13 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
       <OrderListButton />
       <IndentMoreButton />
       <IndentLessButton />
-      <InsertLinkButton  onClick={() => setShowLinkDialog(true)} />
+      <InsertLinkButton  onClick={() => linkDialogRef.current.show({ open: true })} />
     </div>
   
     
     </>}
     <div ref={rootRef} />
-    {showLinkDialog && <LinkDialog onCancel={() => setShowLinkDialog(false)} />}
+    <LinkDialog ref={linkDialogRef} />
 
 
     
