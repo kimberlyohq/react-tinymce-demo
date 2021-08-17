@@ -1,3 +1,4 @@
+const { uuid } = require("uuidv4");
 export const UPLOAD_URL = "http://localhost:8000/attachment/upload";
 
 export const image_upload_handler = (file) => {
@@ -31,8 +32,7 @@ export const image_upload_handler = (file) => {
         reject("Invalid JSON: " + xhr.responseText);
         return;
       }
-      // set the src of the image
-      // update the cid of the file
+
       resolve(json);
     };
 
@@ -49,18 +49,55 @@ export const image_upload_handler = (file) => {
   });
 };
 
+export const getUploadImageSize = (src) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = function () {
+      resolve(getBestFitSize({ width: this.width, height: this.height }));
+    };
+    img.onerror = (e) => reject(e);
+    img.src = src;
+  });
+};
+
+const SIZE_BEST_FIT = 472;
+
+function getBestFitSize({ width, height }) {
+  const ratio = width / height;
+
+  if (width > SIZE_BEST_FIT || height > SIZE_BEST_FIT) {
+    if (ratio > 1) {
+      return { width: SIZE_BEST_FIT, height: SIZE_BEST_FIT / ratio };
+    } else {
+      return { width: ratio * SIZE_BEST_FIT, height: SIZE_BEST_FIT };
+    }
+  } else {
+    return { width: width, height: height };
+  }
+}
+
 export const insertImages = (editor, files) => {
   [...files].forEach(async (file) => {
     const src = URL.createObjectURL(file);
-    console.log(src);
+    const id = uuid();
     try {
-      const json = await image_upload_handler(file);
-      const cid = json.id;
+      const element = `<p><img id=${id} src='https://assets.easilydo.com/onmail/photo-loading.png' alt=${file.name} width=100 height=100 /></p>`;
+      editor.execCommand("mceInsertContent", false, {
+        content: element,
+      });
+      // TODO: load the placeholder images first
+      const res = await image_upload_handler(file);
+      const size = await getUploadImageSize(src);
+      const cid = res.id;
+      if (cid && size) {
+        editor.dom.setAttribs(id, {
+          src: src,
+          width: size.width,
+          height: size.height,
+        });
+      }
     } catch (err) {
       console.log(err);
     }
-    editor.execCommand("mceInsertContent", false, {
-      content: `<img src=${src} />`,
-    });
   });
 };
