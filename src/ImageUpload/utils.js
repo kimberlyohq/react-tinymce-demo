@@ -85,7 +85,7 @@ export const insertImages = (editor, files) => {
       editor.execCommand("mceInsertContent", false, {
         content: element,
       });
-      // TODO: load the placeholder images first
+
       const res = await image_upload_handler(file);
       const size = await getUploadImageSize(src);
       const cid = res.id;
