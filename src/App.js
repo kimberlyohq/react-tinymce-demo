@@ -63,7 +63,7 @@ function App({
   defaultValue = "",
 }) {
   const rootRef = useRef();
-  const [editor, setEdtitor] = useState(null);
+  const [editor, setEditor] = useState(null);
   const linkDialogRef = useRef();
 
   useEffect(() => {
@@ -83,7 +83,7 @@ function App({
         editor.setDirty(false)
         editor.setMode(disabled ? 'readonly' : 'design')
         autoFocus && editor.focus()
-        setEdtitor(editor)
+        setEditor(editor)
       },
       setup: editor => {
         console.log('setup')
