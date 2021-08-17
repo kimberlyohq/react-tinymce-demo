@@ -242,7 +242,6 @@ function App({
         },
         paste_postprocess: (plugin, args) => {
           // after it has been converted into a dom node
-          console.log(args.node);
         },
         autoresize_bottom_margin: 0,
         object_resizing: "img",
