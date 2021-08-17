@@ -35,7 +35,7 @@ import {
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
 // import 'tinymce/plugins/link';
-import "tinymce/plugins/paste";
+// import "tinymce/plugins/paste";
 // import 'tinymce/plugins/image';
 import "tinymce/plugins/lists";
 import "tinymce/plugins/autoresize";
@@ -171,19 +171,9 @@ function App({
 
         block_unsupported_drop: false,
 
-        automatic_uploads: true,
-        images_upload_url: UPLOAD_URL,
         images_reuse_filename: true,
         images_upload_handler: image_upload_handler,
 
-        paste_data_images: true,
-        paste_enable_default_filters: false,
-        paste_preprocess: (plugin, args) => {
-          console.log(args);
-        },
-        paste_postprocess: (plugin, args) => {
-          // after it has been converted into a dom node
-        },
         autoresize_bottom_margin: 0,
         object_resizing: "img",
       })
