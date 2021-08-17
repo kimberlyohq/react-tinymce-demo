@@ -1,4 +1,4 @@
-const { uuid } = require("uuidv4");
+import { v4 as uuid } from "uuid";
 export const UPLOAD_URL = "http://localhost:8000/attachment/upload";
 export const FETCH_INLINE_IMAGE_URL = "http://localhost:8000/attachment";
 
@@ -104,3 +104,18 @@ export const insertImages = (editor, files) => {
   });
 };
 
+export const loadInlineImage = async (editor) => {
+  // TODO: FIX data-cid
+  const nodes = editor.dom.select("img[data-cid]");
+  nodes.forEach(async (node) => {
+    try {
+      const cid = node.getAttribute("data-cid");
+      const res = await fetch(`${FETCH_INLINE_IMAGE_URL}/${cid}`);
+      const fileBlob = await res.blob();
+      const src = URL.createObjectURL(fileBlob);
+      nodes[0].setAttribute("src", src);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+};

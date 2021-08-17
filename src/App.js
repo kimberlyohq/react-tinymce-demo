@@ -26,7 +26,7 @@ import {
   InsertLinkButton,
   InsertImageButton,
 } from "./Buttons";
-import { insertImages } from "./ImageUpload/utils";
+import { insertImages, loadInlineImage } from "./ImageUpload/utils";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
@@ -73,9 +73,10 @@ function App({
         target: rootRef.current,
         plugins: "lists autoresize spellchecker_onmail paste",
 
-        init_instance_callback: (editor) => {
+        init_instance_callback: async (editor) => {
           console.log("init instance callback");
           editor.setContent(defaultValue);
+          await loadInlineImage(editor);
           editor.undoManager.clear();
           editor.undoManager.add();
           editor.setDirty(false);
