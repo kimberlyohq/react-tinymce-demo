@@ -31,6 +31,7 @@ export function image_upload_handler(blobInfo, success, failure, progress) {
       return;
     }
     // set the src of the image
+    // update the cid of the file
     // success(json.location);
   };
 
@@ -47,7 +48,6 @@ export function image_upload_handler(blobInfo, success, failure, progress) {
 }
 
 export const insertImage = (editor, files) => {
-  console.log(files);
   const images = [...files].map((file) => {
     const src = URL.createObjectURL(file);
     editor.execCommand(
@@ -55,11 +55,5 @@ export const insertImage = (editor, files) => {
       false,
       `<img alt=${file.name} src=${src}></img>`
     );
-    return {
-      type: "image",
-      children: [{ text: "" }],
-      file,
-      src: URL.createObjectURL(file),
-    };
   });
 };
