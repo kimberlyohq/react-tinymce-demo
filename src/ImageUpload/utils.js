@@ -1,7 +1,6 @@
 export const UPLOAD_URL = "http://localhost:8000/attachment/upload";
 
 export function image_upload_handler(blobInfo, success, failure, progress) {
-  console.log(blobInfo);
   let xhr, formData;
 
   xhr = new XMLHttpRequest();
@@ -9,7 +8,7 @@ export function image_upload_handler(blobInfo, success, failure, progress) {
   xhr.open("POST", UPLOAD_URL);
 
   xhr.upload.onprogress = function (e) {
-    progress((e.loaded / e.total) * 100);
+    console.log((e.loaded / e.total) * 100);
   };
 
   xhr.onload = function () {
@@ -32,7 +31,7 @@ export function image_upload_handler(blobInfo, success, failure, progress) {
       return;
     }
     // set the src of the image
-    success(json.location);
+    // success(json.location);
   };
 
   xhr.onerror = function () {
@@ -54,7 +53,7 @@ export const insertImage = (editor, files) => {
     editor.execCommand(
       "mceInsertContent",
       false,
-      `<img alt=${file.name} src=${src} width=100 height=100 ></img>`
+      `<img alt=${file.name} src=${src}></img>`
     );
     return {
       type: "image",

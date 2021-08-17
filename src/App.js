@@ -25,7 +25,7 @@ import {
   IndentLessButton,
   InsertLinkButton,
 } from "./Buttons";
-import { UPLOAD_URL } from "./ImageUpload/utils";
+import { UPLOAD_URL, image_upload_handler } from "./ImageUpload/utils";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
@@ -65,58 +65,6 @@ function App({
   const linkDialogRef = useRef();
 
   useEffect(() => {
-    function example_image_upload_handler(
-      blobInfo,
-      success,
-      failure,
-      progress
-    ) {
-      var xhr, formData;
-
-      xhr = new XMLHttpRequest();
-      xhr.withCredentials = false;
-      xhr.open("POST", "postAcceptor.php");
-
-      xhr.upload.onprogress = function (e) {
-        progress((e.loaded / e.total) * 100);
-      };
-
-      xhr.onload = function () {
-        var json;
-
-        if (xhr.status === 403) {
-          failure("HTTP Error: " + xhr.status, { remove: true });
-          return;
-        }
-
-        if (xhr.status < 200 || xhr.status >= 300) {
-          failure("HTTP Error: " + xhr.status);
-          return;
-        }
-
-        json = JSON.parse(xhr.responseText);
-
-        if (!json || typeof json.location != "string") {
-          failure("Invalid JSON: " + xhr.responseText);
-          return;
-        }
-
-        success(json.location);
-      };
-
-      xhr.onerror = function () {
-        failure(
-          "Image upload failed due to a XHR Transport error. Code: " +
-            xhr.status
-        );
-      };
-
-      formData = new FormData();
-      formData.append("file", blobInfo.blob(), blobInfo.filename());
-
-      xhr.send(formData);
-    }
-
     tinymce
       .init({
         readonly: disabled,
@@ -285,14 +233,17 @@ function App({
         automatic_uploads: true,
         images_upload_url: UPLOAD_URL,
         images_reuse_filename: true,
-        images_upload_handler: example_image_upload_handler,
+        images_upload_handler: image_upload_handler,
 
         paste_data_images: true,
         paste_enable_default_filters: false,
-        // paste_preprocess: (plugin, args) => {
-
-        // }
-
+        paste_preprocess: (plugin, args) => {
+          console.log(args);
+        },
+        paste_postprocess: (plugin, args) => {
+          // after it has been converted into a dom node
+          console.log(args.node);
+        },
         autoresize_bottom_margin: 0,
         object_resizing: "img",
       })
