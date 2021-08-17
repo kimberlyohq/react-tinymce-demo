@@ -25,12 +25,13 @@ import {
   IndentLessButton,
   InsertLinkButton,
 } from "./Buttons";
+import { image_upload_handler } from "./utils";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
 // import 'tinymce/plugins/link';
-// import 'tinymce/plugins/paste';
-// import 'tinymce/plugins/image';
+import 'tinymce/plugins/paste';
+import "tinymce/plugins/image";
 import "tinymce/plugins/lists";
 import "tinymce/plugins/autoresize";
 // import 'tinymce/plugins/charmap';
@@ -64,63 +65,11 @@ function App({
   const [showLinkDialog, setShowLinkDialog] = useState(false);
 
   useEffect(() => {
-    function example_image_upload_handler(
-      blobInfo,
-      success,
-      failure,
-      progress
-    ) {
-      var xhr, formData;
-
-      xhr = new XMLHttpRequest();
-      xhr.withCredentials = false;
-      xhr.open("POST", "postAcceptor.php");
-
-      xhr.upload.onprogress = function (e) {
-        progress((e.loaded / e.total) * 100);
-      };
-
-      xhr.onload = function () {
-        var json;
-
-        if (xhr.status === 403) {
-          failure("HTTP Error: " + xhr.status, { remove: true });
-          return;
-        }
-
-        if (xhr.status < 200 || xhr.status >= 300) {
-          failure("HTTP Error: " + xhr.status);
-          return;
-        }
-
-        json = JSON.parse(xhr.responseText);
-
-        if (!json || typeof json.location != "string") {
-          failure("Invalid JSON: " + xhr.responseText);
-          return;
-        }
-
-        success(json.location);
-      };
-
-      xhr.onerror = function () {
-        failure(
-          "Image upload failed due to a XHR Transport error. Code: " +
-            xhr.status
-        );
-      };
-
-      formData = new FormData();
-      formData.append("file", blobInfo.blob(), blobInfo.filename());
-
-      xhr.send(formData);
-    }
-
     tinymce
       .init({
         readonly: disabled,
         target: rootRef.current,
-        plugins: "lists autoresize",
+        plugins: "lists autoresize image paste",
         init_instance_callback: (editor) => {
           console.log("init instance callback");
           editor.setContent(defaultValue);
@@ -168,7 +117,7 @@ function App({
         icons: "",
         preview_styles: false,
         menubar: false,
-        toolbar: false,
+        toolbar: "image",
         placeholder: "this is a placeholder",
         resize: true,
         skin: false,
@@ -273,14 +222,16 @@ function App({
         browser_spellcheck: true,
 
         block_unsupported_drop: false,
+        automatic_uploads: true,
+        images_upload_url: "http://localhost:8000/attachment/upload",
         images_reuse_filename: true,
-        images_upload_handler: example_image_upload_handler,
+        images_upload_handler: image_upload_handler,
 
         paste_data_images: true,
         paste_enable_default_filters: false,
-        // paste_preprocess: (plugin, args) => {
-
-        // }
+        paste_preprocess: (plugin, args) => {
+          console.log(args);
+        },
 
         autoresize_bottom_margin: 0,
         object_resizing: "img",
