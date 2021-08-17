@@ -54,7 +54,7 @@ import "tinymce/plugins/autoresize";
 // import contentCss from '!!raw-loader!tinymce/skins/content/default/content.min.css';
 // import contentUiCss from '!!raw-loader!tinymce/skins/ui/oxide/content.min.css';
 import './plugins/spellchecker'
-
+import contentStyle from '!!raw-loader!./contentStyle.css'
 
 function App({
   disabled = false,
@@ -137,88 +137,9 @@ function App({
         statusbar: false,
 
         content_css: false,
-        content_style: `.mce-content-body { min-height: 286px !important; font: small/ 1.5  Arial,Helvetica,sans-serif } 
-      .ephox-snooker-resizer-bar {
-        background-color: #b4d7ff;
-        opacity: 0;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
-      .ephox-snooker-resizer-cols {
-        cursor: col-resize;
-      }
-      .ephox-snooker-resizer-rows {
-        cursor: row-resize;
-      }
-      .ephox-snooker-resizer-bar.ephox-snooker-resizer-bar-dragging {
-        opacity: 1;
-      }
-      .mce-content-body img::-moz-selection {
-        background: none;
-      }
-      .mce-content-body img::selection {
-        background: none;
-      }
-      .mce-content-body img[data-mce-selected] {
-  outline: 3px solid #b4d7ff;
-}
-      .mce-content-body div.mce-resizehandle {
-        background-color: #4099ff;
-        border-color: #4099ff;
-        border-style: solid;
-        border-width: 1px;
-        box-sizing: border-box;
-        height: 10px;
-        position: absolute;
-        width: 10px;
-        z-index: 10000;
-      }
-      .mce-content-body div.mce-resizehandle:hover {
-        background-color: #4099ff;
-      }
-      .mce-content-body div.mce-resizehandle:nth-of-type(1) {
-        cursor: nwse-resize;
-      }
-      .mce-content-body div.mce-resizehandle:nth-of-type(2) {
-        cursor: nesw-resize;
-      }
-      .mce-content-body div.mce-resizehandle:nth-of-type(3) {
-        cursor: nwse-resize;
-      }
-      .mce-content-body div.mce-resizehandle:nth-of-type(4) {
-        cursor: nesw-resize;
-      }
-      .mce-content-body .mce-resize-backdrop {
-        z-index: 10000;
-      }
-      .mce-content-body .mce-clonedresizable {
-        cursor: default;
-        opacity: 0.5;
-        outline: 1px dashed black;
-        position: absolute;
-        z-index: 10001;
-      }
-      .mce-content-body .mce-resize-helper {
-        background: #555;
-        background: rgba(0, 0, 0, 0.75);
-        border: 1px;
-        border-radius: 3px;
-        color: white;
-        display: none;
-        font-family: sans-serif;
-        font-size: 12px;
-        line-height: 14px;
-        margin: 5px 10px;
-        padding: 5px;
-        position: absolute;
-        white-space: nowrap;
-        z-index: 10002;
-      }
-      `,
+        content_style: contentStyle,
 
-      visual: false,
+        visual: false,
 
         convert_fonts_to_spans: false,
         element_format: "html",
