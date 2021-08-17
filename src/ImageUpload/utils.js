@@ -47,13 +47,12 @@ export function image_upload_handler(blobInfo, success, failure, progress) {
   xhr.send(formData);
 }
 
-export const insertImage = (editor, files) => {
-  const images = [...files].map((file) => {
+export const insertImages = (editor, files) => {
+  [...files].forEach((file) => {
     const src = URL.createObjectURL(file);
-    editor.execCommand(
-      "mceInsertContent",
-      false,
-      `<img alt=${file.name} src=${src}></img>`
-    );
+    console.log(src);
+    editor.execCommand("mceInsertContent", false, {
+      content: `<img src=${src} />`,
+    });
   });
 };

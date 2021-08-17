@@ -26,12 +26,16 @@ import {
   InsertLinkButton,
   InsertImageButton,
 } from "./Buttons";
-import { UPLOAD_URL, image_upload_handler } from "./ImageUpload/utils";
+import {
+  UPLOAD_URL,
+  image_upload_handler,
+  insertImages,
+} from "./ImageUpload/utils";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
 // import 'tinymce/plugins/link';
-// import 'tinymce/plugins/paste';
+import "tinymce/plugins/paste";
 // import 'tinymce/plugins/image';
 import "tinymce/plugins/lists";
 import "tinymce/plugins/autoresize";
@@ -67,29 +71,40 @@ function App({
   const linkDialogRef = useRef();
 
   useEffect(() => {
-    
-    tinymce.init({
-      readonly: disabled,
-      target: rootRef.current,
-      plugins: 'lists autoresize spellchecker_onmail',
-     
-      init_instance_callback: editor => {
-        
-       
-        console.log('init instance callback')
-        editor.setContent(defaultValue)
-        editor.undoManager.clear()
-        editor.undoManager.add()
-        editor.setDirty(false)
-        editor.setMode(disabled ? 'readonly' : 'design')
-        autoFocus && editor.focus()
-        setEditor(editor)
-      },
-      setup: editor => {
-        console.log('setup')
-        editor.ui.registry.addButton('linkedit', {
-          text: 'edit link',
-               onAction: () => {
+    tinymce
+      .init({
+        readonly: disabled,
+        target: rootRef.current,
+        plugins: "lists autoresize spellchecker_onmail",
+
+        init_instance_callback: (editor) => {
+          console.log("init instance callback");
+          editor.setContent(defaultValue);
+          editor.undoManager.clear();
+          editor.undoManager.add();
+          editor.setDirty(false);
+          editor.setMode(disabled ? "readonly" : "design");
+          autoFocus && editor.focus();
+          setEditor(editor);
+
+          // paste event
+          editor.on("paste", function (event) {
+            event.preventDefault();
+            console.log("paste event is fired");
+            let files = (event.clipboardData || window.clipboardData).files;
+            console.log(files);
+            if (files.length === 0) {
+              console.log("no files");
+              return;
+            }
+            insertImages(editor, files);
+          });
+        },
+        setup: (editor) => {
+          console.log("setup");
+          editor.ui.registry.addButton("linkedit", {
+            text: "edit link",
+            onAction: () => {
               const linkNode = editor.dom
                 .getParents(editor.selection.getNode())
                 .find((node) => node.nodeName === "A");
@@ -110,7 +125,6 @@ function App({
           var isLinkNode = function (link) {
             return editor.dom.is(link, "a") && editor.getBody().contains(link);
           };
-         
 
           editor.ui.registry.addContextToolbar("table", {
             predicate: isLinkNode,
@@ -125,7 +139,6 @@ function App({
         custom_ui_selector: ".custom-inline-strong",
         elementpath: false,
         min_height: 300,
-
 
         icons: "",
         preview_styles: false,
@@ -186,7 +199,6 @@ function App({
   }, [editor]);
   return (
     <EditorContext.Provider value={editor}>
-
       {!!editor && (
         <>
           <div className="custom-inline-strong">
@@ -212,8 +224,7 @@ function App({
         </>
       )}
       <div ref={rootRef} />
-       {!!editor && <LinkDialog ref={linkDialogRef} />}
-
+      {!!editor && <LinkDialog ref={linkDialogRef} />}
     </EditorContext.Provider>
   );
 }
