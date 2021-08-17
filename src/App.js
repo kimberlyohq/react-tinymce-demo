@@ -31,7 +31,7 @@ import { insertImages } from "./ImageUpload/utils";
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
 // import 'tinymce/plugins/link';
-// import "tinymce/plugins/paste";
+import "tinymce/plugins/paste";
 // import 'tinymce/plugins/image';
 import "tinymce/plugins/lists";
 import "tinymce/plugins/autoresize";
@@ -53,8 +53,8 @@ import "tinymce/plugins/autoresize";
 /* eslint import/no-webpack-loader-syntax: off */
 // import contentCss from '!!raw-loader!tinymce/skins/content/default/content.min.css';
 // import contentUiCss from '!!raw-loader!tinymce/skins/ui/oxide/content.min.css';
-import './plugins/spellchecker'
-import contentStyle from '!!raw-loader!./contentStyle.css'
+import "./plugins/spellchecker";
+import contentStyle from "!!raw-loader!./contentStyle.css";
 
 function App({
   disabled = false,
@@ -71,7 +71,7 @@ function App({
       .init({
         readonly: disabled,
         target: rootRef.current,
-        plugins: "lists autoresize spellchecker_onmail",
+        plugins: "lists autoresize spellchecker_onmail paste",
 
         init_instance_callback: (editor) => {
           console.log("init instance callback");
@@ -88,7 +88,6 @@ function App({
             event.preventDefault();
             console.log("paste event is fired");
             let files = (event.clipboardData || window.clipboardData).files;
-            console.log(files);
             if (files.length === 0) {
               console.log("no files");
               return;
@@ -166,7 +165,6 @@ function App({
         browser_spellcheck: true,
 
         block_unsupported_drop: false,
-
         images_reuse_filename: true,
         autoresize_bottom_margin: 0,
         object_resizing: "img",
