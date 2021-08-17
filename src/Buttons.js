@@ -208,6 +208,11 @@ export const InsertImageButton = () => {
   const handleUpload = async (e) => {
     if (!e.target.files.length) return;
 
+    editor.execCommand(
+      "mceInsertContent",
+      false,
+      `<img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"></img>`
+    );
     inputRef.current.value = "";
   };
   return (

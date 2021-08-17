@@ -1,10 +1,12 @@
+export const UPLOAD_URL = "http://localhost:8000/attachment/upload";
+
 export function image_upload_handler(blobInfo, success, failure, progress) {
   console.log(blobInfo);
   let xhr, formData;
 
   xhr = new XMLHttpRequest();
   xhr.withCredentials = false;
-  xhr.open("POST", 'http://localhost:8000/attachment/upload');
+  xhr.open("POST", UPLOAD_URL);
 
   xhr.upload.onprogress = function (e) {
     progress((e.loaded / e.total) * 100);
@@ -29,7 +31,7 @@ export function image_upload_handler(blobInfo, success, failure, progress) {
       failure("Invalid JSON: " + xhr.responseText);
       return;
     }
-
+    // set the src of the image
     success(json.location);
   };
 

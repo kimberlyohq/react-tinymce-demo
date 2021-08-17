@@ -25,13 +25,12 @@ import {
   IndentLessButton,
   InsertLinkButton,
 } from "./Buttons";
-import { image_upload_handler } from "./utils";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
 // import 'tinymce/plugins/link';
-import 'tinymce/plugins/paste';
-import "tinymce/plugins/image";
+// import 'tinymce/plugins/paste';
+// import 'tinymce/plugins/image';
 import "tinymce/plugins/lists";
 import "tinymce/plugins/autoresize";
 // import 'tinymce/plugins/charmap';
@@ -61,18 +60,67 @@ function App({
 }) {
   const rootRef = useRef();
 
-function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', }) {
-  const rootRef = useRef()
-  
-  const [editor, setEdtitor] = useState(null)
-  const linkDialogRef = useRef()
-  
+  const [editor, setEdtitor] = useState(null);
+  const linkDialogRef = useRef();
+
   useEffect(() => {
+    function example_image_upload_handler(
+      blobInfo,
+      success,
+      failure,
+      progress
+    ) {
+      var xhr, formData;
+
+      xhr = new XMLHttpRequest();
+      xhr.withCredentials = false;
+      xhr.open("POST", "postAcceptor.php");
+
+      xhr.upload.onprogress = function (e) {
+        progress((e.loaded / e.total) * 100);
+      };
+
+      xhr.onload = function () {
+        var json;
+
+        if (xhr.status === 403) {
+          failure("HTTP Error: " + xhr.status, { remove: true });
+          return;
+        }
+
+        if (xhr.status < 200 || xhr.status >= 300) {
+          failure("HTTP Error: " + xhr.status);
+          return;
+        }
+
+        json = JSON.parse(xhr.responseText);
+
+        if (!json || typeof json.location != "string") {
+          failure("Invalid JSON: " + xhr.responseText);
+          return;
+        }
+
+        success(json.location);
+      };
+
+      xhr.onerror = function () {
+        failure(
+          "Image upload failed due to a XHR Transport error. Code: " +
+            xhr.status
+        );
+      };
+
+      formData = new FormData();
+      formData.append("file", blobInfo.blob(), blobInfo.filename());
+
+      xhr.send(formData);
+    }
+
     tinymce
       .init({
         readonly: disabled,
         target: rootRef.current,
-        plugins: "lists autoresize image paste",
+        plugins: "lists autoresize",
         init_instance_callback: (editor) => {
           console.log("init instance callback");
           editor.setContent(defaultValue);
@@ -81,42 +129,21 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
           editor.setDirty(false);
           editor.setMode(disabled ? "readonly" : "design");
           autoFocus && editor.focus();
-          setEditor(editor);
+          setEdtitor(editor);
         },
         setup: (editor) => {
           console.log("setup");
           editor.ui.registry.addButton("linkedit", {
             text: "edit link",
 
-<<<<<<< HEAD
-    tinymce.init({
-      readonly: disabled,
-      target: rootRef.current,
-      plugins: 'lists autoresize',
-      init_instance_callback: editor => {
-        
-       
-        console.log('init instance callback')
-        editor.setContent(defaultValue)
-        editor.undoManager.clear()
-        editor.undoManager.add()
-        editor.setDirty(false)
-        editor.setMode(disabled ? 'readonly' : 'design')
-        autoFocus && editor.focus()
-        setEditor(editor);
-      },
-      setup: editor => {
-        console.log('setup')
-        editor.ui.registry.addButton('linkedit', {
-          text: 'edit link',
-          
-          onAction: () => {
-            const linkNode = editor.dom.getParents(editor.selection.getNode()).find(node => node.nodeName === 'A') 
-            const linkContent = linkNode.text
-            const linkHref = linkNode.getAttribute('href')
-            linkDialogRef.current.show(linkContent, linkHref)
-=======
-            onAction: () => {},
+            onAction: () => {
+              const linkNode = editor.dom
+                .getParents(editor.selection.getNode())
+                .find((node) => node.nodeName === "A");
+              const linkContent = linkNode.text;
+              const linkHref = linkNode.getAttribute("href");
+              linkDialogRef.current.show(linkContent, linkHref);
+            },
           });
           editor.ui.registry.addButton("linkopen", {
             text: "open link",
@@ -126,7 +153,6 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
             text: "remove link",
             onAction: () => {},
           });
->>>>>>> style: update formatting
 
           var isLinkNode = function (link) {
             return editor.dom.is(link, "a") && editor.getBody().contains(link);
@@ -149,7 +175,7 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
         icons: "",
         preview_styles: false,
         menubar: false,
-        toolbar: "image",
+        toolbar: false,
         placeholder: "this is a placeholder",
         resize: true,
         skin: false,
@@ -254,16 +280,14 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
         browser_spellcheck: true,
 
         block_unsupported_drop: false,
-        automatic_uploads: true,
-        images_upload_url: "http://localhost:8000/attachment/upload",
         images_reuse_filename: true,
-        images_upload_handler: image_upload_handler,
+        images_upload_handler: example_image_upload_handler,
 
         paste_data_images: true,
         paste_enable_default_filters: false,
-        paste_preprocess: (plugin, args) => {
-          console.log(args);
-        },
+        // paste_preprocess: (plugin, args) => {
+
+        // }
 
         autoresize_bottom_margin: 0,
         object_resizing: "img",
@@ -280,34 +304,6 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
   }, [editor]);
   return (
     <EditorContext.Provider value={editor}>
-<<<<<<< HEAD
-      
-       {!!editor && <><div className="custom-inline-strong">
-      <BoldButton />
-      <ItalicButton />
-      <UnderlineButton />
-      <StrikethroughButton />
-      <RedColorButton />
-      <BlueColorButton />
-      <HighlightButton />
-      <SmallSizeButton />
-      <LargeSizeButton />
-      <RemoveFormatButton />
-      <BulletListButton />
-      <OrderListButton />
-      <IndentMoreButton />
-      <IndentLessButton />
-      <InsertLinkButton  onClick={() => linkDialogRef.current.show({ open: true })} />
-    </div>
-  
-    
-    </>}
-    <div ref={rootRef} />
-    <LinkDialog ref={linkDialogRef} />
-
-
-    
-=======
       {!!editor && (
         <>
           <div className="custom-inline-strong">
@@ -325,15 +321,14 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
             <OrderListButton />
             <IndentMoreButton />
             <IndentLessButton />
-            <InsertLinkButton onClick={() => setShowLinkDialog(true)} />
+            <InsertLinkButton
+              onClick={() => linkDialogRef.current.show({ open: true })}
+            />
           </div>
         </>
       )}
       <div ref={rootRef} />
-      {showLinkDialog && (
-        <LinkDialog onCancel={() => setShowLinkDialog(false)} />
-      )}
->>>>>>> style: update formatting
+      <LinkDialog ref={linkDialogRef} />
     </EditorContext.Provider>
   );
 }
