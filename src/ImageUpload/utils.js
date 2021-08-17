@@ -28,7 +28,7 @@ export const image_upload_handler = (file) => {
 
       json = JSON.parse(xhr.responseText);
 
-      if (!json || typeof json.location != "string") {
+      if (!json) {
         reject("Invalid JSON: " + xhr.responseText);
         return;
       }

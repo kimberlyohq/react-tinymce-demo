@@ -9,6 +9,7 @@ router.post("/upload", (req, res) => {
 });
 
 router.get("/:id", (req, res) => {
+  console.log(process.cwd());
   res.sendFile("doge.jpeg", { root: process.cwd() });
 });
 
