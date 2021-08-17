@@ -1,22 +1,40 @@
-import './App.css'
-import { useRef, useEffect, useState } from 'react'
-import LinkDialog from './LinkDialog'
-import tinymce from 'tinymce/tinymce'
-import { EditorContext } from './EditorContext'
-import 'tinymce/themes/silver';
+import "./App.css";
+import { useRef, useEffect, useState } from "react";
+import LinkDialog from "./LinkDialog";
+import tinymce from "tinymce/tinymce";
+import { EditorContext } from "./EditorContext";
+import "tinymce/themes/silver";
 // Toolbar icons
-import 'tinymce/icons/default';
+import "tinymce/icons/default";
 // // Editor styles
-import 'tinymce/skins/ui/oxide/skin.min.css';
-import { BoldButton, ItalicButton, UnderlineButton, StrikethroughButton, RedColorButton, BlueColorButton, HighlightButton, SmallSizeButton, LargeSizeButton, RemoveFormatButton, BulletListButton, OrderListButton, IndentMoreButton, IndentLessButton, InsertLinkButton } from './Buttons'
+import "tinymce/skins/ui/oxide/skin.min.css";
+import {
+  BoldButton,
+  ItalicButton,
+  UnderlineButton,
+  StrikethroughButton,
+  RedColorButton,
+  BlueColorButton,
+  HighlightButton,
+  SmallSizeButton,
+  LargeSizeButton,
+  RemoveFormatButton,
+  BulletListButton,
+  OrderListButton,
+  IndentMoreButton,
+  IndentLessButton,
+  InsertLinkButton,
+  InsertImageButton,
+} from "./Buttons";
+import { UPLOAD_URL, image_upload_handler } from "./ImageUpload/utils";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
 // import 'tinymce/plugins/link';
 // import 'tinymce/plugins/paste';
 // import 'tinymce/plugins/image';
-import 'tinymce/plugins/lists';
-import 'tinymce/plugins/autoresize'
+import "tinymce/plugins/lists";
+import "tinymce/plugins/autoresize";
 // import 'tinymce/plugins/charmap';
 // import 'tinymce/plugins/hr';
 // import 'tinymce/plugins/anchor';
@@ -37,58 +55,19 @@ import 'tinymce/plugins/autoresize'
 // import contentUiCss from '!!raw-loader!tinymce/skins/ui/oxide/content.min.css';
 import './plugins/spellchecker'
 
-function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', }) {
-  const rootRef = useRef()
-  
-  const [editor, setEdtitor] = useState(null)
-  const linkDialogRef = useRef()
-  
+
+function App({
+  disabled = false,
+  autoFocus = true,
+  onChange,
+  defaultValue = "",
+}) {
+  const rootRef = useRef();
+  const [editor, setEdtitor] = useState(null);
+  const linkDialogRef = useRef();
+
   useEffect(() => {
-
-    function example_image_upload_handler (blobInfo, success, failure, progress) {
-      var xhr, formData;
     
-      xhr = new XMLHttpRequest();
-      xhr.withCredentials = false;
-      xhr.open('POST', 'postAcceptor.php');
-    
-      xhr.upload.onprogress = function (e) {
-        progress(e.loaded / e.total * 100);
-      };
-    
-      xhr.onload = function() {
-        var json;
-    
-        if (xhr.status === 403) {
-          failure('HTTP Error: ' + xhr.status, { remove: true });
-          return;
-        }
-    
-        if (xhr.status < 200 || xhr.status >= 300) {
-          failure('HTTP Error: ' + xhr.status);
-          return;
-        }
-    
-        json = JSON.parse(xhr.responseText);
-    
-        if (!json || typeof json.location != 'string') {
-          failure('Invalid JSON: ' + xhr.responseText);
-          return;
-        }
-    
-        success(json.location);
-      };
-    
-      xhr.onerror = function () {
-        failure('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
-      };
-    
-      formData = new FormData();
-      formData.append('file', blobInfo.blob(), blobInfo.filename());
-    
-      xhr.send(formData);
-    };
-
     tinymce.init({
       readonly: disabled,
       target: rootRef.current,
@@ -110,60 +89,55 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
         console.log('setup')
         editor.ui.registry.addButton('linkedit', {
           text: 'edit link',
-          
-          onAction: () => {
-            const linkNode = editor.dom.getParent(editor.selection.getNode(), 'a')
-            const linkContent = linkNode.text
-            const linkHref = linkNode.getAttribute('href')
-            linkDialogRef.current.show(linkContent, linkHref)
+               onAction: () => {
+              const linkNode = editor.dom
+                .getParents(editor.selection.getNode())
+                .find((node) => node.nodeName === "A");
+              const linkContent = linkNode.text;
+              const linkHref = linkNode.getAttribute("href");
+              linkDialogRef.current.show(linkContent, linkHref);
+            },
+          });
+          editor.ui.registry.addButton("linkopen", {
+            text: "open link",
+            onAction: () => {},
+          });
+          editor.ui.registry.addButton("linkremove", {
+            text: "remove link",
+            onAction: () => {},
+          });
 
-          },
-        });
-        editor.ui.registry.addButton('linkopen', {
-          text: 'open link',
-          onAction: () => {
-            
-          },
-        });
-        editor.ui.registry.addButton('linkremove', {
-          text: 'remove link',
-          onAction: () => {
-            editor.execCommand('unlink')
-          },
-        });
+          var isLinkNode = function (link) {
+            return editor.dom.is(link, "a") && editor.getBody().contains(link);
+          };
+         
 
-        var isLinkNode = function (link) {
-          return editor.dom.is(link, 'a') && editor.getBody().contains(link);
-        };
+          editor.ui.registry.addContextToolbar("table", {
+            predicate: isLinkNode,
+            items: "linkedit | linkopen | linkremove",
+            scope: "node",
+            position: "node",
+          });
+        },
 
-        editor.ui.registry.addContextToolbar('table', {
-          predicate: isLinkNode,
-          items: 'linkedit | linkopen | linkremove',
-          scope: 'node',
-          position: 'node'
-        });
-      },
+        branding: false,
+        contextmenu: false,
+        custom_ui_selector: ".custom-inline-strong",
+        elementpath: false,
+        min_height: 300,
 
-      branding: false,
-      contextmenu: 'spellchecker',
-      custom_ui_selector: '.custom-inline-strong',
-      elementpath: false,
-      min_height: 300,
-      
-     
-      icons: '',
-      preview_styles: false,
-      menubar: false,
-      toolbar: 'spellchecker',
-      placeholder: 'this is a placeholder',
-      resize: true,
-      skin: false,
-      statusbar: false,
-      
 
-      
-      content_css: false,
-      content_style: `.mce-content-body { min-height: 286px !important; font: small/ 1.5  Arial,Helvetica,sans-serif } 
+        icons: "",
+        preview_styles: false,
+        menubar: false,
+        toolbar: "spellchecker",
+        placeholder: "this is a placeholder",
+        resize: true,
+        skin: false,
+        statusbar: false,
+
+        content_css: false,
+        content_style: `.mce-content-body { min-height: 286px !important; font: small/ 1.5  Arial,Helvetica,sans-serif } 
       .ephox-snooker-resizer-bar {
         background-color: #b4d7ff;
         opacity: 0;
@@ -243,87 +217,83 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
         z-index: 10002;
       }
       `,
+
       visual: false,
 
+        convert_fonts_to_spans: false,
+        element_format: "html",
+        forced_root_block: "div",
+        //if set false the space key will not work
+        remove_trailing_brs: true,
+        //the formats will change the format recognize
+        formats: {
+          //  bold: {inline: "b"},
+          // italic: { inline: 'i' },
+          // underline: { inline: 'u'},
+          // strikethrough: { inline: 'strike' },
+        },
 
-      convert_fonts_to_spans: false,
-      element_format: 'html',
-      forced_root_block: 'div',
-      //if set false the space key will not work
-      remove_trailing_brs: true,
-      //the formats will change the format recognize
-      formats: {
-        //  bold: {inline: "b"},
-        // italic: { inline: 'i' },
-        // underline: { inline: 'u'},
-        // strikethrough: { inline: 'strike' },
-        
-      
-      },
+        browser_spellcheck: true,
 
-      
+        block_unsupported_drop: false,
 
+        automatic_uploads: true,
+        images_upload_url: UPLOAD_URL,
+        images_reuse_filename: true,
+        images_upload_handler: image_upload_handler,
 
-      block_unsupported_drop: false,
-      images_reuse_filename: true,
-      images_upload_handler: example_image_upload_handler,
-
-      paste_data_images: true,
-      paste_enable_default_filters: false,
-      // paste_preprocess: (plugin, args) => {
-
-      // }
-
-      autoresize_bottom_margin: 0,
-      object_resizing: 'img'
-    
-
-    }).then(editors => {
-      console.log('init complete')
-    
-    })
-    
-  }, [])
+        paste_data_images: true,
+        paste_enable_default_filters: false,
+        paste_preprocess: (plugin, args) => {
+          console.log(args);
+        },
+        paste_postprocess: (plugin, args) => {
+          // after it has been converted into a dom node
+        },
+        autoresize_bottom_margin: 0,
+        object_resizing: "img",
+      })
+      .then((editors) => {
+        console.log("init complete");
+      });
+  }, []);
 
   useEffect(() => {
-    
-      return () => {
-        editor && editor.destroy()
-      }
-    
-    
-  }, [editor])
+    return () => {
+      editor && editor.destroy();
+    };
+  }, [editor]);
   return (
-    
     <EditorContext.Provider value={editor}>
-      
-       {!!editor && <><div className="custom-inline-strong">
-      <BoldButton />
-      <ItalicButton />
-      <UnderlineButton />
-      <StrikethroughButton />
-      <RedColorButton />
-      <BlueColorButton />
-      <HighlightButton />
-      <SmallSizeButton />
-      <LargeSizeButton />
-      <RemoveFormatButton />
-      <BulletListButton />
-      <OrderListButton />
-      <IndentMoreButton />
-      <IndentLessButton />
-      <InsertLinkButton  onClick={() => linkDialogRef.current.show({ open: true })} />
-    </div>
-  
-    
-    </>}
-    <div ref={rootRef} />
-    {!!editor && <LinkDialog ref={linkDialogRef} />}
 
+      {!!editor && (
+        <>
+          <div className="custom-inline-strong">
+            <BoldButton />
+            <ItalicButton />
+            <UnderlineButton />
+            <StrikethroughButton />
+            <RedColorButton />
+            <BlueColorButton />
+            <HighlightButton />
+            <SmallSizeButton />
+            <LargeSizeButton />
+            <RemoveFormatButton />
+            <BulletListButton />
+            <OrderListButton />
+            <IndentMoreButton />
+            <IndentLessButton />
+            <InsertLinkButton
+              onClick={() => linkDialogRef.current.show({ open: true })}
+            />
+            <InsertImageButton />
+          </div>
+        </>
+      )}
+      <div ref={rootRef} />
+       {!!editor && <LinkDialog ref={linkDialogRef} />}
 
-    
     </EditorContext.Provider>
-    
   );
 }
 

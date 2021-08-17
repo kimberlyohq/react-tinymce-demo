@@ -1,196 +1,228 @@
-import React, { useContext, useState, useEffect, useCallback, useRef } from 'react'
-import { EditorContext } from './EditorContext'
+import React, {
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+} from "react";
+import { EditorContext } from "./EditorContext";
+import { insertImage } from "./ImageUpload/utils";
 
 export function MarkButton({ type, children, value, onMouseDown, ...rest }) {
-  const editor = useContext(EditorContext)
+  const editor = useContext(EditorContext);
   const [actived, setActived] = useState(() => {
-    
-    return editor.dom.getParents(editor.selection.getNode()).some(node => editor.formatter.matchNode(node, type, value ? { value: value } : {}))
-  })
+    return editor.dom
+      .getParents(editor.selection.getNode())
+      .some((node) =>
+        editor.formatter.matchNode(node, type, value ? { value: value } : {})
+      );
+  });
 
   useEffect(() => {
-   
-      const nodeChangeHander = e => {
-        setActived(e.parents.some(node => editor.formatter.matchNode(node, type, value ? { value: value } : {})))
-
-      }
-      editor.on('NodeChange', nodeChangeHander)
-      return () => {
-        editor.off('NodeChange', nodeChangeHander)
-      }
-   
-
-    
-  }, [])
+    const nodeChangeHander = (e) => {
+      setActived(
+        e.parents.some((node) =>
+          editor.formatter.matchNode(node, type, value ? { value: value } : {})
+        )
+      );
+    };
+    editor.on("NodeChange", nodeChangeHander);
+    return () => {
+      editor.off("NodeChange", nodeChangeHander);
+    };
+  }, []);
 
   return (
-    <button {...rest} onMouseDown={(e) => { 
-      
-      e.preventDefault();
-      
-      editor.focus()
-      editor.formatter.toggle(type, value ? { value: value } : undefined)
-      // editor.nodeChanged()
-    
-      
-    }} style={{ color: actived ? 'blue' : 'black' }}>{children}</button>
-  )
+    <button
+      {...rest}
+      onMouseDown={(e) => {
+        e.preventDefault();
+
+        editor.focus();
+        editor.formatter.toggle(type, value ? { value: value } : undefined);
+        // editor.nodeChanged()
+      }}
+      style={{ color: actived ? "blue" : "black" }}
+    >
+      {children}
+    </button>
+  );
 }
 
 export function BoldButton() {
-  return <MarkButton type="bold">Bold</MarkButton>
+  return <MarkButton type="bold">Bold</MarkButton>;
 }
 
 export function ItalicButton() {
-  return <MarkButton type="italic">Italic </MarkButton>
+  return <MarkButton type="italic">Italic </MarkButton>;
 }
 
 export function UnderlineButton() {
-  return <MarkButton type="underline">Underline </MarkButton>
-
+  return <MarkButton type="underline">Underline </MarkButton>;
 }
 
 export function StrikethroughButton() {
-  return <MarkButton type="strikethrough">Strikethrough </MarkButton>
-
+  return <MarkButton type="strikethrough">Strikethrough </MarkButton>;
 }
 export function RedColorButton() {
-  return <MarkButton type="forecolor" value="red">Red color </MarkButton>
-
+  return (
+    <MarkButton type="forecolor" value="red">
+      Red color
+    </MarkButton>
+  );
 }
 
 export function BlueColorButton() {
-  return <MarkButton type="forecolor" value="blue">Blue color </MarkButton>
-
+  return (
+    <MarkButton type="forecolor" value="blue">
+      Blue color
+    </MarkButton>
+  );
 }
 
 export function HighlightButton() {
-  return <MarkButton type="hilitecolor" value="#ffd41a">Highlight color </MarkButton>
+  return (
+    <MarkButton type="hilitecolor" value="#ffd41a">
+      Highlight color{" "}
+    </MarkButton>
+  );
 }
 
 export function LargeSizeButton() {
-  return <MarkButton type="fontsize" value="large">Large size </MarkButton>
-
+  return (
+    <MarkButton type="fontsize" value="large">
+      Large size
+    </MarkButton>
+  );
 }
 
 export function SmallSizeButton() {
-  return <MarkButton type="fontsize" value="x-small">Small size </MarkButton>
-
+  return (
+    <MarkButton type="fontsize" value="x-small">
+      Small size
+    </MarkButton>
+  );
 }
 export function RemoveFormatButton({ ...rest }) {
-  const editor = useContext(EditorContext)
-
-  return <button {...rest} onMouseDown={(e) => { 
-      
-    e.preventDefault();
-    editor.focus()
-    editor.formatter.toggle('removeformat')
-  
-  
-    
-  }} >Remove format</button>
-}
-const listTypeToNodeName = {
-  bullist: 'UL',
-  numlist: 'OL'
-}
-const listTypeToCommand = {
-  bullist: 'InsertUnorderedList',
-  numlist: 'InsertOrderedList'
-}
-function ListButton({ type, children }) {
-  const editor = useContext(EditorContext)
-  const getActived = useCallback(e => {
-    return e.parents.some(node => node.nodeName === listTypeToNodeName[type])
-  }, [])
-  const [actived, setActived] = useState(getActived({  parents: editor.dom.getParents(editor.selection.getNode())}))
-  
-
-  useEffect(() => {
-      const nodeChangeHander = e => {
-        setActived(getActived(e))
-      }
-      
-      editor.on('NodeChange', nodeChangeHander)
-      return () => {
-        editor.off('NodeChange', nodeChangeHander)
-      }
-    
-    
-    
-  }, [])
+  const editor = useContext(EditorContext);
 
   return (
-    <button onMouseDown={(e) => { 
-      
-      e.preventDefault();
-      editor.focus()
-      editor.execCommand('RemoveList')
+    <button
+      {...rest}
+      onMouseDown={(e) => {
+        e.preventDefault();
+        editor.focus();
+        editor.formatter.toggle("removeformat");
+      }}
+    >
+      Remove format
+    </button>
+  );
+}
+const listTypeToNodeName = {
+  bullist: "UL",
+  numlist: "OL",
+};
+const listTypeToCommand = {
+  bullist: "InsertUnorderedList",
+  numlist: "InsertOrderedList",
+};
+function ListButton({ type, children }) {
+  const editor = useContext(EditorContext);
+  const getActived = useCallback((e) => {
+    return e.parents.some((node) => node.nodeName === listTypeToNodeName[type]);
+  }, []);
+  const [actived, setActived] = useState(
+    getActived({ parents: editor.dom.getParents(editor.selection.getNode()) })
+  );
 
-      !actived && editor.execCommand(listTypeToCommand[type])
-      
-      
-    
-      
-    }} style={{ color: actived ? 'blue' : 'black' }}>{children}</button>
-  )
+  useEffect(() => {
+    const nodeChangeHander = (e) => {
+      setActived(getActived(e));
+    };
+
+    editor.on("NodeChange", nodeChangeHander);
+    return () => {
+      editor.off("NodeChange", nodeChangeHander);
+    };
+  }, []);
+
+  return (
+    <button
+      onMouseDown={(e) => {
+        e.preventDefault();
+        editor.focus();
+        editor.execCommand("RemoveList");
+
+        !actived && editor.execCommand(listTypeToCommand[type]);
+      }}
+      style={{ color: actived ? "blue" : "black" }}
+    >
+      {children}
+    </button>
+  );
 }
 
 export const BulletListButton = () => {
-  return <ListButton type="bullist">Bullet list</ListButton>
-}
+  return <ListButton type="bullist">Bullet list</ListButton>;
+};
 
 export const OrderListButton = () => {
-  return <ListButton type="numlist">Order list</ListButton>
-
-}
+  return <ListButton type="numlist">Order list</ListButton>;
+};
 
 export const IndentMoreButton = () => {
-  const editor = useContext(EditorContext)
+  const editor = useContext(EditorContext);
 
-  return <button onMouseDown={(e) => { 
-      
-    e.preventDefault();
-    editor.focus()
-    editor.execCommand('indent')
-    
-  
-  
-    
-  }} >Indent more</button>
-}
+  return (
+    <button
+      onMouseDown={(e) => {
+        e.preventDefault();
+        editor.focus();
+        editor.execCommand("indent");
+      }}
+    >
+      Indent more
+    </button>
+  );
+};
 
 export const IndentLessButton = () => {
-  const editor = useContext(EditorContext)
+  const editor = useContext(EditorContext);
 
-  return <button onMouseDown={(e) => { 
-      
-    e.preventDefault();
-    editor.focus()
-    editor.execCommand('outdent')
-
-  
-  
-    
-  }} >Indent less</button>
-}
+  return (
+    <button
+      onMouseDown={(e) => {
+        e.preventDefault();
+        editor.focus();
+        editor.execCommand("outdent");
+      }}
+    >
+      Indent less
+    </button>
+  );
+};
 
 export const InsertImageButton = () => {
-  const editor = useContext(EditorContext)
-  const inputRef = useRef()
-  const handleUpload = async e => {
-    
-    if (!e.target.files.length) return
-
-
-    inputRef.current.value = ''
-  }
-  return <>
-    <button onMouseDown={e => {
-          e.preventDefault()
-          inputRef.current.click()
-        }}>Insert image</button>
-    <input
+  const editor = useContext(EditorContext);
+  const inputRef = useRef();
+  const handleUpload = async (e) => {
+    if (!e.target.files.length) return;
+    const files = e.target.files;
+    insertImage(editor, files);
+    inputRef.current.value = "";
+  };
+  return (
+    <>
+      <button
+        onMouseDown={(e) => {
+          e.preventDefault();
+          inputRef.current.click();
+        }}
+      >
+        Insert image
+      </button>
+      <input
         type="file"
         hidden
         ref={inputRef}
@@ -198,14 +230,21 @@ export const InsertImageButton = () => {
         accept="image/*"
         multiple
       />
-  </>
-}
+    </>
+  );
+};
 
 export const InsertLinkButton = ({ onClick }) => {
-
-  
-  return <><button onMouseDown={(e) => {
-    e.preventDefault()
-    onClick()
-  }}>Insert link</button></>
-}
+  return (
+    <>
+      <button
+        onMouseDown={(e) => {
+          e.preventDefault();
+          onClick();
+        }}
+      >
+        Insert link
+      </button>
+    </>
+  );
+};
