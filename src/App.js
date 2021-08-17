@@ -24,6 +24,7 @@ import {
   IndentMoreButton,
   IndentLessButton,
   InsertLinkButton,
+  InsertImageButton,
 } from "./Buttons";
 import { UPLOAD_URL, image_upload_handler } from "./ImageUpload/utils";
 // importing the plugin js.
@@ -278,6 +279,7 @@ function App({
             <InsertLinkButton
               onClick={() => linkDialogRef.current.show({ open: true })}
             />
+            <InsertImageButton />
           </div>
         </>
       )}
