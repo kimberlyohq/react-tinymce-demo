@@ -26,11 +26,7 @@ import {
   InsertLinkButton,
   InsertImageButton,
 } from "./Buttons";
-import {
-  UPLOAD_URL,
-  image_upload_handler,
-  insertImages,
-} from "./ImageUpload/utils";
+import { insertImages } from "./ImageUpload/utils";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
@@ -172,8 +168,6 @@ function App({
         block_unsupported_drop: false,
 
         images_reuse_filename: true,
-        images_upload_handler: image_upload_handler,
-
         autoresize_bottom_margin: 0,
         object_resizing: "img",
       })
