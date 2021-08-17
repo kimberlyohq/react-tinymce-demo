@@ -120,7 +120,7 @@ function App({
       .init({
         readonly: disabled,
         target: rootRef.current,
-        plugins: "lists autoresize",
+        plugins: "lists autoresize paste",
         init_instance_callback: (editor) => {
           console.log("init instance callback");
           editor.setContent(defaultValue);
