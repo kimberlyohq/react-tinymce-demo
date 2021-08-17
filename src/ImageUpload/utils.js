@@ -1,5 +1,6 @@
 const { uuid } = require("uuidv4");
 export const UPLOAD_URL = "http://localhost:8000/attachment/upload";
+export const FETCH_INLINE_IMAGE_URL = "http://localhost:8000/attachment";
 
 export const image_upload_handler = (file) => {
   return new Promise((resolve, reject) => {
@@ -94,6 +95,7 @@ export const insertImages = (editor, files) => {
           src: src,
           width: size.width,
           height: size.height,
+          cid: cid,
         });
       }
     } catch (err) {
@@ -101,3 +103,4 @@ export const insertImages = (editor, files) => {
     }
   });
 };
+
