@@ -25,6 +25,7 @@ import {
   IndentLessButton,
   InsertLinkButton,
 } from "./Buttons";
+import { UPLOAD_URL } from "./ImageUpload/utils";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
@@ -280,6 +281,9 @@ function App({
         browser_spellcheck: true,
 
         block_unsupported_drop: false,
+
+        automatic_uploads: true,
+        images_upload_url: UPLOAD_URL,
         images_reuse_filename: true,
         images_upload_handler: example_image_upload_handler,
 

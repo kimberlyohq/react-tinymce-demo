@@ -6,6 +6,7 @@ import React, {
   useRef,
 } from "react";
 import { EditorContext } from "./EditorContext";
+import { insertImage } from "./ImageUpload/utils";
 
 export function MarkButton({ type, children, value, onMouseDown, ...rest }) {
   const editor = useContext(EditorContext);
@@ -207,12 +208,8 @@ export const InsertImageButton = () => {
   const inputRef = useRef();
   const handleUpload = async (e) => {
     if (!e.target.files.length) return;
-
-    editor.execCommand(
-      "mceInsertContent",
-      false,
-      `<img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"></img>`
-    );
+    const files = e.target.files;
+    insertImage(editor, files);
     inputRef.current.value = "";
   };
   return (
