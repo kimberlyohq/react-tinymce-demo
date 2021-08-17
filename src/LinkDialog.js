@@ -1,11 +1,5 @@
-import React, {
-  useContext,
-  useRef,
-  useImperativeHandle,
-  forwardRef,
-  useState,
-} from "react";
-import { EditorContext } from "./EditorContext";
+import React, { useContext, useRef, useImperativeHandle, forwardRef, useState, useEffect } from 'react'
+import { EditorContext } from './EditorContext'
 
 function LinkDialog({}, ref) {
   const editor = useContext(EditorContext);
@@ -32,6 +26,18 @@ function LinkDialog({}, ref) {
     setState((state) => ({ ...state, open: false }));
   };
 
+
+  useEffect(() => {
+    const handleFocusIn = () => {
+      setState(state => ({ ...state, open: false }))
+    }
+    editor.on('focusin', handleFocusIn)
+    return () => {
+      editor.off('focusin', handleFocusIn)
+    }
+  }, [])
+  
+
   useImperativeHandle(
     ref,
     () => ({
@@ -45,6 +51,7 @@ function LinkDialog({}, ref) {
   if (!open) return null;
 
   return (
+
     <div
       style={{
         position: "absolute",
@@ -70,6 +77,7 @@ function LinkDialog({}, ref) {
       <button onClick={() => setState((state) => ({ ...state, open: false }))}>
         cancel
       </button>
+
       <button onClick={handleSure}>sure</button>
     </div>
   );
