@@ -35,7 +35,7 @@ import 'tinymce/plugins/autoresize'
 /* eslint import/no-webpack-loader-syntax: off */
 // import contentCss from '!!raw-loader!tinymce/skins/content/default/content.min.css';
 // import contentUiCss from '!!raw-loader!tinymce/skins/ui/oxide/content.min.css';
-
+import './plugins/spellchecker'
 
 function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', }) {
   const rootRef = useRef()
@@ -92,7 +92,8 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
     tinymce.init({
       readonly: disabled,
       target: rootRef.current,
-      plugins: 'lists autoresize',
+      plugins: 'lists autoresize spellchecker_onmail',
+     
       init_instance_callback: editor => {
         
        
@@ -111,7 +112,7 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
           text: 'edit link',
           
           onAction: () => {
-            const linkNode = editor.dom.getParents(editor.selection.getNode()).find(node => node.nodeName === 'A') 
+            const linkNode = editor.dom.getParent(editor.selection.getNode(), 'a')
             const linkContent = linkNode.text
             const linkHref = linkNode.getAttribute('href')
             linkDialogRef.current.show(linkContent, linkHref)
@@ -127,7 +128,7 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
         editor.ui.registry.addButton('linkremove', {
           text: 'remove link',
           onAction: () => {
-            
+            editor.execCommand('unlink')
           },
         });
 
@@ -144,7 +145,7 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
       },
 
       branding: false,
-      contextmenu: false,
+      contextmenu: 'spellchecker',
       custom_ui_selector: '.custom-inline-strong',
       elementpath: false,
       min_height: 300,
@@ -153,7 +154,7 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
       icons: '',
       preview_styles: false,
       menubar: false,
-      toolbar: false,
+      toolbar: 'spellchecker',
       placeholder: 'this is a placeholder',
       resize: true,
       skin: false,
@@ -260,7 +261,7 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
       
       },
 
-      browser_spellcheck: true,
+      
 
 
       block_unsupported_drop: false,
@@ -317,7 +318,7 @@ function App({ disabled = false, autoFocus = true, onChange, defaultValue = '', 
     
     </>}
     <div ref={rootRef} />
-    <LinkDialog ref={linkDialogRef} />
+    {!!editor && <LinkDialog ref={linkDialogRef} />}
 
 
     
