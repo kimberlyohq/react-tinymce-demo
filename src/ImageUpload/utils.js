@@ -77,22 +77,32 @@ function getBestFitSize({ width, height }) {
   }
 }
 
+const LoadingImage = (id) => {
+  return `<p><img id=${id} src='https://assets.easilydo.com/onmail/photo-loading.png' width=100 height=100 /></p>`;
+};
+
 export const insertImages = (editor, files) => {
   [...files].forEach(async (file) => {
     const src = URL.createObjectURL(file);
     const id = uuid();
     try {
-      const element = `<p><img id=${id} src='https://assets.easilydo.com/onmail/photo-loading.png' alt=${file.name} width=100 height=100 /></p>`;
+      const placeholder = `${LoadingImage(id)}`;
       editor.execCommand("mceInsertContent", false, {
-        content: element,
+        content: placeholder,
       });
 
       const res = await image_upload_handler(file);
       const size = await getUploadImageSize(src);
+
+      await new Promise((resolve) => {
+        setTimeout(resolve, 2000);
+      });
+
       const cid = res.id;
       if (cid && size) {
         editor.dom.setAttribs(id, {
           src: src,
+          file: file.name,
           width: size.width,
           height: size.height,
           cid: cid,
