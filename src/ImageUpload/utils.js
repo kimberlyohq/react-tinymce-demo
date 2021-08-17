@@ -104,18 +104,30 @@ export const insertImages = (editor, files) => {
   });
 };
 
-export const loadInlineImage = async (editor) => {
-  // TODO: FIX data-cid
-  const nodes = editor.dom.select("img[data-cid]");
-  nodes.forEach(async (node) => {
-    try {
-      const cid = node.getAttribute("data-cid");
-      const res = await fetch(`${FETCH_INLINE_IMAGE_URL}/${cid}`);
-      const fileBlob = await res.blob();
-      const src = URL.createObjectURL(fileBlob);
-      nodes[0].setAttribute("src", src);
-    } catch (err) {
-      console.log(err);
-    }
+export const loadInlineImage = (editor) => {
+  const inlineImagesNodes = editor.dom.select("img").filter((node) => {
+    const src = node.getAttribute("src");
+    return src.startsWith("cid:");
   });
+
+  if (inlineImagesNodes.length === 0) {
+    return;
+  }
+  inlineImagesNodes.forEach(async (node) => {
+    const src = node.getAttribute("src");
+    const cid = src.slice(4);
+    await fetchInlineImage(node, cid);
+  });
+};
+
+const fetchInlineImage = async (node, cid) => {
+  try {
+    const res = await fetch(`${FETCH_INLINE_IMAGE_URL}/${cid}`);
+    const fileBlob = await res.blob();
+    const src = URL.createObjectURL(fileBlob);
+    node.setAttribute("src", src);
+    node.setAttribute("data-mce-src", src);
+  } catch (err) {
+    console.log(err);
+  }
 };

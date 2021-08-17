@@ -65,7 +65,6 @@ function App({
   const rootRef = useRef();
   const [editor, setEditor] = useState(null);
   const linkDialogRef = useRef();
-
   useEffect(() => {
     tinymce
       .init({
@@ -73,10 +72,11 @@ function App({
         target: rootRef.current,
         plugins: "lists autoresize spellchecker_onmail paste",
 
-        init_instance_callback: async (editor) => {
+        init_instance_callback: (editor) => {
           console.log("init instance callback");
           editor.setContent(defaultValue);
-          await loadInlineImage(editor);
+          // TODO: parse the default value first before setting content
+          loadInlineImage(editor);
           editor.undoManager.clear();
           editor.undoManager.add();
           editor.setDirty(false);
