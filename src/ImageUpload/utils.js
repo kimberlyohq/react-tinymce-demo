@@ -75,7 +75,7 @@ function getBestFitSize({ width, height }) {
       return { width: ratio * SIZE_BEST_FIT, height: SIZE_BEST_FIT };
     }
   } else {
-    return { width: width, height: height };
+    return { width, height };
   }
 }
 
