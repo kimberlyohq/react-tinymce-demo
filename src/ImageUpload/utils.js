@@ -77,10 +77,7 @@ function getBestFitSize({ width, height }) {
   } else {
     return { width, height };
   }
-
-const LoadingImage = (id) => {
-  return `<p><img id=${id} src='https://assets.easilydo.com/onmail/photo-loading.png' width=100 height=100 /></p>`;
-};
+}
 
 const mockTimeout = async () => {
   await new Promise((resolve) => {
