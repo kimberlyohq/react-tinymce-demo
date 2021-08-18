@@ -1,6 +1,8 @@
 import { v4 as uuid } from "uuid";
 export const UPLOAD_URL = "http://localhost:8000/attachment/upload";
 export const FETCH_INLINE_IMAGE_URL = "http://localhost:8000/attachment";
+const PHOTO_LOADING_SRC =
+  "https://assets.easilydo.com/onmail/photo-loading.png";
 
 export const image_upload_handler = (file) => {
   return new Promise((resolve, reject) => {
@@ -73,9 +75,8 @@ function getBestFitSize({ width, height }) {
       return { width: ratio * SIZE_BEST_FIT, height: SIZE_BEST_FIT };
     }
   } else {
-    return { width: width, height: height };
+    return { width, height };
   }
-}
 
 const LoadingImage = (id) => {
   return `<p><img id=${id} src='https://assets.easilydo.com/onmail/photo-loading.png' width=100 height=100 /></p>`;
@@ -92,10 +93,14 @@ export const insertImages = (editor, files) => {
     const src = URL.createObjectURL(file);
     const id = uuid();
     try {
-      const placeholder = `${LoadingImage(id)}`;
-      editor.execCommand("mceInsertContent", false, {
-        content: placeholder,
-      });
+      editor.selection.setNode(
+        editor.dom.create("img", {
+          src: PHOTO_LOADING_SRC,
+          id,
+          width: 100,
+          height: 100,
+        })
+      );
 
       await mockTimeout();
 
@@ -113,7 +118,8 @@ export const insertImages = (editor, files) => {
         });
       }
     } catch (err) {
-      console.log(err);
+      // remove placeholder image if upload failed
+      editor.dom.remove(id);
     }
   });
 };
