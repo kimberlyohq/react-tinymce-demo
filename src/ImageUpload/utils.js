@@ -85,7 +85,7 @@ export const insertImages = (editor, files) => {
     const id = uuid();
     try {
       editor.selection.setContent(
-        `<p><img id=${id} src=${PHOTO_LOADING_SRC} width=100 height=100 /></p>`
+        `<div><img id=${id} src=${PHOTO_LOADING_SRC} width=100 height=100 /></div>`
       );
 
       const res = await image_upload_handler(file);
