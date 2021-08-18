@@ -115,17 +115,15 @@ export const insertImages = (editor, files) => {
 };
 
 export const loadInlineImage = (editor) => {
-  const inlineImagesNodes = editor.dom.select("img").filter((node) => {
-    const src = node.getAttribute("src");
-    return src.startsWith("cid:");
-  });
+  const inlineImagesNodes = editor.dom.select("img[data-cid]");
 
   if (inlineImagesNodes.length === 0) {
     return;
   }
+
   inlineImagesNodes.forEach(async (node) => {
-    const src = node.getAttribute("src");
-    const cid = src.slice(4);
+    const cid = node.getAttribute("data-cid");
+    // TODO: add placeholder image at the correct position
     await fetchInlineImage(node, cid);
   });
 };
@@ -133,6 +131,7 @@ export const loadInlineImage = (editor) => {
 const fetchInlineImage = async (node, cid) => {
   try {
     const res = await fetch(`${FETCH_INLINE_IMAGE_URL}/${cid}`);
+    // TODO: add mock timeout
     const fileBlob = await res.blob();
     const src = URL.createObjectURL(fileBlob);
     node.setAttribute("src", src);
