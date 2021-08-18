@@ -118,17 +118,33 @@ export const insertImages = (editor, files) => {
   });
 };
 
-export const loadInlineImage = (editor) => {
-  const inlineImagesNodes = editor.dom.select("img[data-cid]");
+export const loadImages = (editor) => {
+  const imageNodes = editor.dom.select("img");
 
-  if (inlineImagesNodes.length === 0) {
+  if (imageNodes.length === 0) {
     return;
   }
 
-  inlineImagesNodes.forEach(async (node) => {
+  const isInlineImage = (node) => node.hasAttribute("data-cid");
+
+  imageNodes.forEach(async (node) => {
+    if (isInlineImage) {
+      await loadInlineImage(editor, node);
+    } else {
+      const dataSrc = node.getAttribute("data-src");
+      node.setAttribute("src", dataSrc);
+      node.setAttribute("data-mce-src", dataSrc);
+    }
+  });
+};
+
+const loadInlineImage = async (editor, node) => {
+  try {
     const cid = node.getAttribute("data-cid");
     await fetchInlineImage(node, cid);
-  });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const fetchInlineImage = async (node, cid) => {
