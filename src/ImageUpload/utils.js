@@ -128,12 +128,13 @@ export const loadImages = (editor) => {
   const isInlineImage = (node) => node.hasAttribute("data-cid");
 
   imageNodes.forEach(async (node) => {
-    if (isInlineImage) {
+    if (isInlineImage(node)) {
       await loadInlineImage(editor, node);
     } else {
       const dataSrc = node.getAttribute("data-src");
       node.setAttribute("src", dataSrc);
       node.setAttribute("data-mce-src", dataSrc);
+      node.removeAttribute("data-src");
     }
   });
 };
@@ -155,6 +156,7 @@ const fetchInlineImage = async (node, cid) => {
     const src = URL.createObjectURL(fileBlob);
     node.setAttribute("src", src);
     node.setAttribute("data-mce-src", src);
+    node.removeAttribute("data-cid");
     node.setAttribute("cid", cid);
   } catch (err) {
     console.log(err);
