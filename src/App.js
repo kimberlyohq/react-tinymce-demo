@@ -26,12 +26,12 @@ import {
   InsertLinkButton,
   InsertImageButton,
 } from "./Buttons";
-import { UPLOAD_URL, image_upload_handler } from "./ImageUpload/utils";
+import { insertImages, loadInlineImage } from "./ImageUpload/utils";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
 // import 'tinymce/plugins/link';
-// import 'tinymce/plugins/paste';
+import "tinymce/plugins/paste";
 // import 'tinymce/plugins/image';
 import "tinymce/plugins/lists";
 import "tinymce/plugins/autoresize";
@@ -63,25 +63,40 @@ function App({
   defaultValue = "",
 }) {
   const rootRef = useRef();
-  const [editor, setEdtitor] = useState(null);
+  const [editor, setEditor] = useState(null);
   const linkDialogRef = useRef();
-
   useEffect(() => {
     tinymce
       .init({
         readonly: disabled,
         target: rootRef.current,
-        plugins: "lists autoresize spellchecker_onmail",
-
+        plugins: "lists autoresize spellchecker_onmail paste",
         init_instance_callback: (editor) => {
           console.log("init instance callback");
           editor.setContent(defaultValue);
+
+          // TODO: parse the default value first before setting content
+          loadInlineImage(editor);
           editor.undoManager.clear();
           editor.undoManager.add();
           editor.setDirty(false);
           editor.setMode(disabled ? "readonly" : "design");
           autoFocus && editor.focus();
-          setEdtitor(editor);
+
+          setEditor(editor);
+
+          // paste event
+          editor.on("paste", function (event) {
+            event.preventDefault();
+            console.log("paste event is fired");
+            let files = (event.clipboardData || window.clipboardData).files;
+            if (files.length === 0) {
+              console.log("no files");
+              return;
+            }
+            insertImages(editor, files);
+          });
+
         },
         setup: (editor) => {
           console.log("setup");
@@ -153,20 +168,7 @@ function App({
         browser_spellcheck: true,
 
         block_unsupported_drop: false,
-
-        automatic_uploads: true,
-        images_upload_url: UPLOAD_URL,
         images_reuse_filename: true,
-        images_upload_handler: image_upload_handler,
-
-        paste_data_images: true,
-        paste_enable_default_filters: false,
-        paste_preprocess: (plugin, args) => {
-          console.log(args);
-        },
-        paste_postprocess: (plugin, args) => {
-          // after it has been converted into a dom node
-        },
         autoresize_bottom_margin: 0,
         object_resizing: "img",
       })
