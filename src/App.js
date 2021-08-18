@@ -26,7 +26,7 @@ import {
   InsertLinkButton,
   InsertImageButton,
 } from "./Buttons";
-import { insertImages, loadInlineImage } from "./ImageUpload/utils";
+import { insertImages, loadImages } from "./ImageUpload/utils";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
@@ -76,7 +76,7 @@ function App({
           editor.setContent(defaultValue);
 
           // TODO: parse the default value first before setting content
-          loadInlineImage(editor);
+          loadImages(editor);
           editor.undoManager.clear();
           editor.undoManager.add();
           editor.setDirty(false);

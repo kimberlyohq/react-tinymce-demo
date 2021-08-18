@@ -77,7 +77,16 @@ function getBestFitSize({ width, height }) {
   } else {
     return { width, height };
   }
-}
+
+const LoadingImage = (id) => {
+  return `<p><img id=${id} src='https://assets.easilydo.com/onmail/photo-loading.png' width=100 height=100 /></p>`;
+};
+
+const mockTimeout = async () => {
+  await new Promise((resolve) => {
+    setTimeout(resolve, 2000);
+  });
+};
 
 export const insertImages = (editor, files) => {
   [...files].forEach(async (file) => {
@@ -93,12 +102,10 @@ export const insertImages = (editor, files) => {
         })
       );
 
+      await mockTimeout();
+
       const res = await image_upload_handler(file);
       const size = await getUploadImageSize(src);
-
-      await new Promise((resolve) => {
-        setTimeout(resolve, 2000);
-      });
 
       const cid = res.id;
       if (cid && size) {
@@ -117,29 +124,46 @@ export const insertImages = (editor, files) => {
   });
 };
 
-export const loadInlineImage = (editor) => {
-  const inlineImagesNodes = editor.dom.select("img").filter((node) => {
-    const src = node.getAttribute("src");
-    return src.startsWith("cid:");
-  });
+export const loadImages = (editor) => {
+  const imageNodes = editor.dom.select("img");
 
-  if (inlineImagesNodes.length === 0) {
+  if (imageNodes.length === 0) {
     return;
   }
-  inlineImagesNodes.forEach(async (node) => {
-    const src = node.getAttribute("src");
-    const cid = src.slice(4);
-    await fetchInlineImage(node, cid);
+
+  const isInlineImage = (node) => node.hasAttribute("data-cid");
+
+  imageNodes.forEach(async (node) => {
+    if (isInlineImage(node)) {
+      await loadInlineImage(editor, node);
+    } else {
+      const dataSrc = node.getAttribute("data-src");
+      node.setAttribute("src", dataSrc);
+      node.setAttribute("data-mce-src", dataSrc);
+      node.removeAttribute("data-src");
+    }
   });
+};
+
+const loadInlineImage = async (editor, node) => {
+  try {
+    const cid = node.getAttribute("data-cid");
+    await fetchInlineImage(node, cid);
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const fetchInlineImage = async (node, cid) => {
   try {
     const res = await fetch(`${FETCH_INLINE_IMAGE_URL}/${cid}`);
+    await mockTimeout();
     const fileBlob = await res.blob();
     const src = URL.createObjectURL(fileBlob);
     node.setAttribute("src", src);
     node.setAttribute("data-mce-src", src);
+    node.removeAttribute("data-cid");
+    node.setAttribute("cid", cid);
   } catch (err) {
     console.log(err);
   }
