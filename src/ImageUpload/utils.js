@@ -111,7 +111,8 @@ export const insertImages = (editor, files) => {
         });
       }
     } catch (err) {
-      console.log(err);
+      // remove placeholder image if upload failed
+      editor.dom.remove(id);
     }
   });
 };
