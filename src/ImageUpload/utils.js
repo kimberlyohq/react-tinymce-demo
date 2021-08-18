@@ -127,16 +127,7 @@ export const loadInlineImage = (editor) => {
 
   inlineImagesNodes.forEach(async (node) => {
     const cid = node.getAttribute("data-cid");
-    try {
-      node.setAttribute(
-        "src",
-        "https://assets.easilydo.com/onmail/photo-loading.png"
-      );
-      await fetchInlineImage(node, cid);
-    } catch (err) {
-      // TODO: check how gmail handles it
-      console.log(err);
-    }
+    await fetchInlineImage(node, cid);
   });
 };
 
