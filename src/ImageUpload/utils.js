@@ -1,8 +1,9 @@
 import { v4 as uuid } from "uuid";
-export const UPLOAD_URL = "http://localhost:8000/attachment/upload";
-export const FETCH_INLINE_IMAGE_URL = "http://localhost:8000/attachment";
-const PHOTO_LOADING_SRC =
-  "https://assets.easilydo.com/onmail/photo-loading.png";
+import {
+  UPLOAD_URL,
+  FETCH_INLINE_IMAGE_URL,
+  PHOTO_LOADING_SRC,
+} from "./constants";
 
 export const image_upload_handler = (file) => {
   return new Promise((resolve, reject) => {
@@ -159,8 +160,8 @@ const fetchInlineImage = async (node, cid) => {
     const src = URL.createObjectURL(fileBlob);
     node.setAttribute("src", src);
     node.setAttribute("data-mce-src", src);
-    node.removeAttribute("data-cid");
     node.setAttribute("cid", cid);
+    node.removeAttribute("data-cid");
   } catch (err) {
     console.log(err);
   }
