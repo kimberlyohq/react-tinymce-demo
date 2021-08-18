@@ -81,6 +81,12 @@ const LoadingImage = (id) => {
   return `<p><img id=${id} src='https://assets.easilydo.com/onmail/photo-loading.png' width=100 height=100 /></p>`;
 };
 
+const mockTimeout = async () => {
+  await new Promise((resolve) => {
+    setTimeout(resolve, 2000);
+  });
+};
+
 export const insertImages = (editor, files) => {
   [...files].forEach(async (file) => {
     const src = URL.createObjectURL(file);
@@ -91,12 +97,10 @@ export const insertImages = (editor, files) => {
         content: placeholder,
       });
 
+      await mockTimeout();
+
       const res = await image_upload_handler(file);
       const size = await getUploadImageSize(src);
-
-      await new Promise((resolve) => {
-        setTimeout(resolve, 2000);
-      });
 
       const cid = res.id;
       if (cid && size) {
@@ -123,19 +127,28 @@ export const loadInlineImage = (editor) => {
 
   inlineImagesNodes.forEach(async (node) => {
     const cid = node.getAttribute("data-cid");
-    // TODO: add placeholder image at the correct position
-    await fetchInlineImage(node, cid);
+    try {
+      node.setAttribute(
+        "src",
+        "https://assets.easilydo.com/onmail/photo-loading.png"
+      );
+      await fetchInlineImage(node, cid);
+    } catch (err) {
+      // TODO: check how gmail handles it
+      console.log(err);
+    }
   });
 };
 
 const fetchInlineImage = async (node, cid) => {
   try {
     const res = await fetch(`${FETCH_INLINE_IMAGE_URL}/${cid}`);
-    // TODO: add mock timeout
+    await mockTimeout();
     const fileBlob = await res.blob();
     const src = URL.createObjectURL(fileBlob);
     node.setAttribute("src", src);
     node.setAttribute("data-mce-src", src);
+    node.setAttribute("cid", cid);
   } catch (err) {
     console.log(err);
   }
