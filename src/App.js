@@ -71,10 +71,10 @@ function App({
         readonly: disabled,
         target: rootRef.current,
         plugins: "lists autoresize spellchecker_onmail paste",
-
         init_instance_callback: (editor) => {
           console.log("init instance callback");
           editor.setContent(defaultValue);
+
           // TODO: parse the default value first before setting content
           loadInlineImage(editor);
           editor.undoManager.clear();
@@ -82,6 +82,7 @@ function App({
           editor.setDirty(false);
           editor.setMode(disabled ? "readonly" : "design");
           autoFocus && editor.focus();
+
           setEditor(editor);
 
           // paste event
@@ -95,6 +96,7 @@ function App({
             }
             insertImages(editor, files);
           });
+
         },
         setup: (editor) => {
           console.log("setup");
@@ -199,9 +201,7 @@ function App({
             <OrderListButton />
             <IndentMoreButton />
             <IndentLessButton />
-            <InsertLinkButton
-              onClick={() => linkDialogRef.current.show({ open: true })}
-            />
+            <InsertLinkButton onClick={() => linkDialogRef.current.show()} />
             <InsertImageButton />
           </div>
         </>
