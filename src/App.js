@@ -53,8 +53,8 @@ import "tinymce/plugins/autoresize";
 /* eslint import/no-webpack-loader-syntax: off */
 // import contentCss from '!!raw-loader!tinymce/skins/content/default/content.min.css';
 // import contentUiCss from '!!raw-loader!tinymce/skins/ui/oxide/content.min.css';
-import './plugins/spellchecker'
-import contentStyle from '!!raw-loader!./contentStyle.css'
+import "./plugins/spellchecker";
+import contentStyle from "!!raw-loader!./contentStyle.css";
 
 function App({
   disabled = false,
@@ -67,29 +67,27 @@ function App({
   const linkDialogRef = useRef();
 
   useEffect(() => {
-    
-    tinymce.init({
-      readonly: disabled,
-      target: rootRef.current,
-      plugins: 'lists autoresize spellchecker_onmail',
-     
-      init_instance_callback: editor => {
-        
-       
-        console.log('init instance callback')
-        editor.setContent(defaultValue)
-        editor.undoManager.clear()
-        editor.undoManager.add()
-        editor.setDirty(false)
-        editor.setMode(disabled ? 'readonly' : 'design')
-        autoFocus && editor.focus()
-        setEdtitor(editor)
-      },
-      setup: editor => {
-        console.log('setup')
-        editor.ui.registry.addButton('linkedit', {
-          text: 'edit link',
-               onAction: () => {
+    tinymce
+      .init({
+        readonly: disabled,
+        target: rootRef.current,
+        plugins: "lists autoresize spellchecker_onmail",
+
+        init_instance_callback: (editor) => {
+          console.log("init instance callback");
+          editor.setContent(defaultValue);
+          editor.undoManager.clear();
+          editor.undoManager.add();
+          editor.setDirty(false);
+          editor.setMode(disabled ? "readonly" : "design");
+          autoFocus && editor.focus();
+          setEdtitor(editor);
+        },
+        setup: (editor) => {
+          console.log("setup");
+          editor.ui.registry.addButton("linkedit", {
+            text: "edit link",
+            onAction: () => {
               const linkNode = editor.dom
                 .getParents(editor.selection.getNode())
                 .find((node) => node.nodeName === "A");
@@ -110,7 +108,6 @@ function App({
           var isLinkNode = function (link) {
             return editor.dom.is(link, "a") && editor.getBody().contains(link);
           };
-         
 
           editor.ui.registry.addContextToolbar("table", {
             predicate: isLinkNode,
@@ -125,7 +122,6 @@ function App({
         custom_ui_selector: ".custom-inline-strong",
         elementpath: false,
         min_height: 300,
-
 
         icons: "",
         preview_styles: false,
@@ -186,7 +182,6 @@ function App({
   }, [editor]);
   return (
     <EditorContext.Provider value={editor}>
-
       {!!editor && (
         <>
           <div className="custom-inline-strong">
@@ -204,16 +199,13 @@ function App({
             <OrderListButton />
             <IndentMoreButton />
             <IndentLessButton />
-            <InsertLinkButton
-              onClick={() => linkDialogRef.current.show({ open: true })}
-            />
+            <InsertLinkButton onClick={() => linkDialogRef.current.show()} />
             <InsertImageButton />
           </div>
         </>
       )}
       <div ref={rootRef} />
-       {!!editor && <LinkDialog ref={linkDialogRef} />}
-
+      {!!editor && <LinkDialog ref={linkDialogRef} />}
     </EditorContext.Provider>
   );
 }
