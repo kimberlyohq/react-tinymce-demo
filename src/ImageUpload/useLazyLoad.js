@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import "intersection-observer";
-import { fetchInlineImage } from "./utils";
+import { fetchInlineImage, loadExternalImage } from "./utils";
 
 const defaultConfig = { root: null, threshold: 0 };
 
@@ -21,10 +21,7 @@ export const useLazyLoad = (editor, config = defaultConfig) => {
 
           // external images
           if (node.getAttribute("data-src")) {
-            const dataSrc = node.getAttribute("data-src");
-            node.removeAttribute("data-src");
-            node.setAttribute("src", dataSrc);
-            node.setAttribute("data-mce-src", dataSrc);
+            loadExternalImage(node);
             observer.unobserve(node);
           } else {
             // inline images
