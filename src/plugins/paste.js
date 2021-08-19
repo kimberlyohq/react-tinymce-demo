@@ -1135,27 +1135,29 @@ var pasteImage = function (editor, imageItem) {
   );
   // hit the api endpoint to upload the image
   var file = imageItem.blob;
-  insertInlineImage(editor, file, uuid);
-  var _a = parseDataUri(imageItem.uri),
-    base64 = _a.data,
-    type = _a.type;
-  var id = uniqueId();
+
   var img = new Image();
   img.src = imageItem.uri;
   if (isValidDataUriImage(editor, img)) {
-    var blobCache = editor.editorUpload.blobCache;
-    var blobInfo = void 0;
-    var existingBlobInfo = blobCache.getByData(base64, type);
-    if (!existingBlobInfo) {
-      var useFileName =
-        getImagesReuseFilename(editor) && isNonNullable(file.name);
-      var name_1 = useFileName ? extractFilename(editor, file.name) : id;
-      var filename = useFileName ? file.name : undefined;
-      blobInfo = blobCache.create(id, file, base64, name_1, filename);
-      blobCache.add(blobInfo);
-    } else {
-      blobInfo = existingBlobInfo;
-    }
+    insertInlineImage(editor, file, UUID);
+    // TODO: investigate what this is for (i think paste is moving the caching logic to upload)
+    //   var _a = parseDataUri(imageItem.uri),
+    //      base64 = _a.data,
+    //     type = _a.type;
+    //   var id = uniqueId();
+    // var blobCache = editor.editorUpload.blobCache;
+    // var blobInfo = void 0;
+    // var existingBlobInfo = blobCache.getByData(base64, type);
+    // if (!existingBlobInfo) {
+    //   var useFileName =
+    //     getImagesReuseFilename(editor) && isNonNullable(file.name);
+    //   var name_1 = useFileName ? extractFilename(editor, file.name) : id;
+    //   var filename = useFileName ? file.name : undefined;
+    //   blobInfo = blobCache.create(id, file, base64, name_1, filename);
+    //   blobCache.add(blobInfo);
+    // } else {
+    //   blobInfo = existingBlobInfo;
+    // }
   } else {
     pasteHtml$1(editor, `<img src=${imageItem.uri}>`, false);
   }

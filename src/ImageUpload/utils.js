@@ -167,8 +167,28 @@ const fetchInlineImage = async (node, cid) => {
   }
 };
 
+export const insertInlineImage = async (editor, file, id) => {
+  const src = URL.createObjectURL(file);
 
-export const insertInlineImage = (editor, file, uuid) => {
-  console.log("hit");
-  console.log(file);
-}
+  try {
+    const res = await image_upload_handler(file);
+    const size = await getUploadImageSize(src);
+
+    await mockTimeout();
+
+    const cid = res.id;
+    if (cid && size) {
+      const img = editor.dom.get(id);
+      console.log(img);
+      editor.dom.setAttribs(id, {
+        ...size,
+        src,
+        file: file.name,
+        cid: cid,
+      });
+    }
+  } catch (err) {
+    // remove placeholder image if upload failed
+    editor.dom.remove(id);
+  }
+};
