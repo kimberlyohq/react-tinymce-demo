@@ -1143,7 +1143,6 @@ var pasteImage = function (editor, imageItem) {
   var img = new Image();
   img.src = imageItem.uri;
   if (isValidDataUriImage(editor, img)) {
-    // TODO: MODIFY THIS
     var blobCache = editor.editorUpload.blobCache;
     var blobInfo = void 0;
     var existingBlobInfo = blobCache.getByData(base64, type);
