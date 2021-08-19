@@ -1,18 +1,13 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import "intersection-observer";
 import { fetchInlineImage } from "./utils";
 
-export const useLazyLoad = (ref, editor, { root = null, threshold = 0 }) => {
-  const memoizedEditor = useMemo(() => editor, [editor]);
+export const useLazyLoad = (editor, { root = null, threshold = 0 }) => {
   useEffect(() => {
-    if (ref.current && editor) {
-      const externalImages = Array.from(
-        memoizedEditor.dom.select("img[data-src]")
-      );
+    if (editor) {
+      const externalImages = Array.from(editor.dom.select("img[data-src]"));
 
-      const inlineImages = Array.from(
-        memoizedEditor.dom.select("img[data-cid]")
-      );
+      const inlineImages = Array.from(editor.dom.select("img[data-cid]"));
 
       const observer = new IntersectionObserver(
         (entries, observer) => {
@@ -49,5 +44,5 @@ export const useLazyLoad = (ref, editor, { root = null, threshold = 0 }) => {
         observer.disconnect();
       };
     }
-  }, [editor, ref]);
+  }, [editor]);
 };

@@ -66,7 +66,7 @@ function App({
   const rootRef = useRef();
   const [editor, setEditor] = useState(null);
   const linkDialogRef = useRef();
-  useLazyLoad(rootRef, editor, {});
+  useLazyLoad(editor, {});
 
   useEffect(() => {
     tinymce
