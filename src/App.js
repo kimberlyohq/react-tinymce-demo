@@ -26,12 +26,12 @@ import {
   InsertLinkButton,
   InsertImageButton,
 } from "./Buttons";
-import { insertImages, loadImages } from "./ImageUpload/utils";
+import { loadImages } from "./ImageUpload/utils";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
 // import 'tinymce/plugins/link';
-import "tinymce/plugins/paste";
+// import "tinymce/plugins/paste";
 // import 'tinymce/plugins/image';
 import "tinymce/plugins/lists";
 import "tinymce/plugins/autoresize";
@@ -54,6 +54,7 @@ import "tinymce/plugins/autoresize";
 // import contentCss from '!!raw-loader!tinymce/skins/content/default/content.min.css';
 // import contentUiCss from '!!raw-loader!tinymce/skins/ui/oxide/content.min.css';
 import "./plugins/spellchecker";
+import "./plugins/paste";
 import contentStyle from "!!raw-loader!./contentStyle.css";
 
 function App({
@@ -70,7 +71,7 @@ function App({
       .init({
         readonly: disabled,
         target: rootRef.current,
-        plugins: "lists autoresize spellchecker_onmail paste",
+        plugins: "lists autoresize spellchecker_onmail paste_onmail",
         init_instance_callback: (editor) => {
           console.log("init instance callback");
           editor.setContent(defaultValue);
@@ -84,19 +85,6 @@ function App({
           autoFocus && editor.focus();
 
           setEditor(editor);
-
-          // paste event
-          editor.on("paste", function (event) {
-            event.preventDefault();
-            console.log("paste event is fired");
-            let files = (event.clipboardData || window.clipboardData).files;
-            if (files.length === 0) {
-              console.log("no files");
-              return;
-            }
-            insertImages(editor, files);
-          });
-
         },
         setup: (editor) => {
           console.log("setup");
