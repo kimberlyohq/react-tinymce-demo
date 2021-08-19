@@ -166,3 +166,9 @@ const fetchInlineImage = async (node, cid) => {
     console.log(err);
   }
 };
+
+
+export const insertInlineImage = (editor, file, uuid) => {
+  console.log("hit");
+  console.log(file);
+}

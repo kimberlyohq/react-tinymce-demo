@@ -7,6 +7,9 @@
  * Version: 5.8.1 (2021-05-20)
  */
 import tinymce from "tinymce/tinymce";
+import { v4 as uuid } from "uuid";
+import { PHOTO_LOADING_SRC } from "../ImageUpload/constants";
+import { insertInlineImage } from "../ImageUpload/utils";
 
 var Cell = function (initial) {
   var value = initial;
@@ -888,7 +891,6 @@ var preProcess$1 = function (editor, html) {
   );
 };
 var processResult = function (content, cancelled) {
-  console.log(content);
   return {
     content: content,
     cancelled: cancelled,
@@ -914,8 +916,6 @@ var filterContent = function (editor, content, internal, isWordHtml) {
     internal,
     isWordHtml
   );
-  var filteredContent = preProcess$1(editor, preProcessArgs.content);
-  console.log(filteredContent);
   if (
     editor.hasEventListeners("PastePostProcess") &&
     !preProcessArgs.isDefaultPrevented()
@@ -1124,15 +1124,26 @@ var extractFilename = function (editor, str) {
   return isNonNullable(m) ? editor.dom.encode(m[1]) : null;
 };
 var uniqueId = createIdGenerator("mceclip");
+
 var pasteImage = function (editor, imageItem) {
+  const UUID = uuid();
+  // insert the placeholder image
+  pasteHtml$1(
+    editor,
+    `<img id=${UUID} src=${PHOTO_LOADING_SRC} width=200 height=200>`,
+    false
+  );
+  // hit the api endpoint to upload the image
+  var file = imageItem.blob;
+  insertInlineImage(editor, file, uuid);
   var _a = parseDataUri(imageItem.uri),
     base64 = _a.data,
     type = _a.type;
   var id = uniqueId();
-  var file = imageItem.blob;
   var img = new Image();
   img.src = imageItem.uri;
   if (isValidDataUriImage(editor, img)) {
+    // TODO: MODIFY THIS
     var blobCache = editor.editorUpload.blobCache;
     var blobInfo = void 0;
     var existingBlobInfo = blobCache.getByData(base64, type);
@@ -1146,9 +1157,8 @@ var pasteImage = function (editor, imageItem) {
     } else {
       blobInfo = existingBlobInfo;
     }
-    pasteHtml$1(editor, '<img src="' + blobInfo.blobUri() + '">', false);
   } else {
-    pasteHtml$1(editor, '<img src="' + imageItem.uri + '">', false);
+    pasteHtml$1(editor, `<img src=${imageItem.uri}>`, false);
   }
 };
 var isClipboardEvent = function (event) {
@@ -1197,10 +1207,9 @@ var getImagesFromDataTransfer = function (editor, dataTransfer) {
 };
 var pasteImageData = function (editor, e, rng) {
   var dataTransfer = isClipboardEvent(e) ? e.clipboardData : e.dataTransfer;
-  console.log(dataTransfer);
   if (getPasteDataImages(editor) && dataTransfer) {
+    // File object
     var images = getImagesFromDataTransfer(editor, dataTransfer);
-    console.log(images);
     if (images.length > 0) {
       e.preventDefault();
       readFilesAsDataUris(images).then(function (fileResults) {
