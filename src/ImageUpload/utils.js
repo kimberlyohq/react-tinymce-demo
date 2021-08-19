@@ -155,7 +155,7 @@ const loadInlineImage = async (editor, node) => {
   }
 };
 
-const fetchInlineImage = async (node, cid) => {
+export const fetchInlineImage = async (node, cid) => {
   try {
     const res = await fetch(`${FETCH_INLINE_IMAGE_URL}/${cid}`);
     await mockTimeout();

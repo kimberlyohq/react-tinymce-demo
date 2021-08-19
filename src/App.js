@@ -26,7 +26,7 @@ import {
   InsertLinkButton,
   InsertImageButton,
 } from "./Buttons";
-import { loadImages } from "./ImageUpload/utils";
+import { useLazyLoad } from "./ImageUpload/useLazyLoad";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
@@ -66,6 +66,8 @@ function App({
   const rootRef = useRef();
   const [editor, setEditor] = useState(null);
   const linkDialogRef = useRef();
+  useLazyLoad(rootRef, editor, {});
+
   useEffect(() => {
     tinymce
       .init({
@@ -73,11 +75,10 @@ function App({
         target: rootRef.current,
         plugins: "lists autoresize spellchecker_onmail paste_onmail",
         init_instance_callback: (editor) => {
+          console.log(editor);
           console.log("init instance callback");
           editor.setContent(defaultValue);
 
-          // TODO: parse the default value first before setting content
-          loadImages(editor);
           editor.undoManager.clear();
           editor.undoManager.add();
           editor.setDirty(false);
@@ -170,6 +171,7 @@ function App({
       editor && editor.destroy();
     };
   }, [editor]);
+
   return (
     <EditorContext.Provider value={editor}>
       {!!editor && (
