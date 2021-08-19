@@ -926,9 +926,9 @@ var filterContent = function (editor, content, internal, isWordHtml) {
   }
 };
 var process = function (editor, html, internal) {
-  // PROCESS - preserve html
   var isWordHtml = isWordContent(html);
-  var content = html;
+  // need to preprocess content if it is pasted from word to remove word tags
+  var content = isWordHtml ? preProcess(editor, html) : html;
   return filterContent(editor, content, internal, isWordHtml);
 };
 
