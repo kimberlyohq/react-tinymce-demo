@@ -296,7 +296,7 @@ var shouldBlockDrop = function (editor) {
   return editor.getParam("paste_block_drop", false);
 };
 var shouldPasteDataImages = function (editor) {
-  return true;
+  return editor.getParam("paste_data_images", false);
 };
 var shouldFilterDrop = function (editor) {
   return editor.getParam("paste_filter_drop", true);
@@ -321,7 +321,7 @@ var isSmartPasteEnabled = function (editor) {
 };
 
 var getRetainStyleProps = function (editor) {
-  return true;
+  return "all";
 };
 var getWordValidElements = function (editor) {
   var defaultValidElements =
@@ -1294,7 +1294,6 @@ var registerEventHandlers = function (editor, pasteBin, pasteFormat) {
         plainTextMode = true;
       }
     }
-    content = trimHtml(content);
     pasteBin.remove();
     var isPlainTextHtml = internal === false && isPlainText(content);
     var isAbsoluteUrl$1 = isAbsoluteUrl(content);
@@ -1775,7 +1774,6 @@ var setup = function (editor, clipboard, draggingInternallyState) {
               editor.execCommand("Delete");
             }
             setFocusedRange(editor, rng);
-            content_1 = trimHtml(content_1);
             if (!dropContent["text/html"]) {
               clipboard.pasteText(content_1);
             } else {
