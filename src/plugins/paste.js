@@ -1111,11 +1111,11 @@ var extractFilename = function (editor, str) {
 var uniqueId = createIdGenerator("mceclip");
 
 var pasteImage = function (editor, imageItem) {
-  const UUID = uuid();
+  const id = uuid();
   // insert the placeholder image
   pasteHtml$1(
     editor,
-    `<img id=${UUID} src=${PHOTO_LOADING_SRC} width=200 height=200>`,
+    `<img id=${id} src=${PHOTO_LOADING_SRC} width=100 height=100>`,
     false
   );
   // hit the api endpoint to upload the image
@@ -1124,7 +1124,7 @@ var pasteImage = function (editor, imageItem) {
   var img = new Image();
   img.src = imageItem.uri;
   if (isValidDataUriImage(editor, img)) {
-    insertInlineImage(editor, file, UUID);
+    insertInlineImage(editor, file, id);
     // TODO: investigate what this is for (i think paste is moving the caching logic to upload)
     //   var _a = parseDataUri(imageItem.uri),
     //      base64 = _a.data,
