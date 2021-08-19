@@ -86,40 +86,43 @@ const mockTimeout = async () => {
   });
 };
 
-export const insertImages = (editor, files) => {
+export const uploadImages = (editor, files) => {
   [...files].forEach(async (file) => {
-    const src = URL.createObjectURL(file);
     const id = uuid();
-    try {
-      editor.selection.setNode(
-        editor.dom.create("img", {
-          src: PHOTO_LOADING_SRC,
-          id,
-          width: 100,
-          height: 100,
-        })
-      );
-
-      await mockTimeout();
-
-      const res = await image_upload_handler(file);
-      const size = await getUploadImageSize(src);
-
-      const cid = res.id;
-      if (cid && size) {
-        editor.dom.setAttribs(id, {
-          src: src,
-          file: file.name,
-          width: size.width,
-          height: size.height,
-          cid: cid,
-        });
-      }
-    } catch (err) {
-      // remove placeholder image if upload failed
-      editor.dom.remove(id);
-    }
+    editor.selection.setNode(
+      editor.dom.create("img", {
+        src: PHOTO_LOADING_SRC,
+        id,
+        width: 100,
+        height: 100,
+      })
+    );
+    await insertInlineImage(editor, file, id);
   });
+};
+
+export const insertInlineImage = async (editor, file, id) => {
+  const src = URL.createObjectURL(file);
+
+  try {
+    const res = await image_upload_handler(file);
+    const size = await getUploadImageSize(src);
+
+    await mockTimeout();
+
+    const cid = res.id;
+    if (cid && size) {
+      editor.dom.setAttribs(id, {
+        ...size,
+        src,
+        cid,
+        file: file.name,
+      });
+    }
+  } catch (err) {
+    // remove placeholder image if upload failed
+    editor.dom.remove(id);
+  }
 };
 
 export const loadImages = (editor) => {
@@ -164,31 +167,5 @@ const fetchInlineImage = async (node, cid) => {
     node.removeAttribute("data-cid");
   } catch (err) {
     console.log(err);
-  }
-};
-
-export const insertInlineImage = async (editor, file, id) => {
-  const src = URL.createObjectURL(file);
-
-  try {
-    const res = await image_upload_handler(file);
-    const size = await getUploadImageSize(src);
-
-    await mockTimeout();
-
-    const cid = res.id;
-    if (cid && size) {
-      const img = editor.dom.get(id);
-      console.log(img);
-      editor.dom.setAttribs(id, {
-        ...size,
-        src,
-        file: file.name,
-        cid: cid,
-      });
-    }
-  } catch (err) {
-    // remove placeholder image if upload failed
-    editor.dom.remove(id);
   }
 };

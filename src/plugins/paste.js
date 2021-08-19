@@ -875,21 +875,6 @@ var preProcess = function (editor, content) {
     : content;
 };
 
-var preProcess$1 = function (editor, html) {
-  var parser = global$7({}, editor.schema);
-  parser.addNodeFilter("meta", function (nodes) {
-    global$5.each(nodes, function (node) {
-      node.remove();
-    });
-  });
-  var fragment = parser.parse(html, {
-    forced_root_block: false,
-    isRootContent: true,
-  });
-  return global$8({ validate: getValidate(editor) }, editor.schema).serialize(
-    fragment
-  );
-};
 var processResult = function (content, cancelled) {
   return {
     content: content,
