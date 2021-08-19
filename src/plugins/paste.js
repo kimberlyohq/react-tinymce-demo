@@ -316,11 +316,9 @@ var shouldMergeFormats = function (editor) {
 var isSmartPasteEnabled = function (editor) {
   return editor.getParam("smart_paste", true);
 };
-var isPasteAsTextEnabled = function (editor) {
-  return editor.getParam("paste_as_text", false);
-};
+
 var getRetainStyleProps = function (editor) {
-  return editor.getParam("paste_retain_style_properties");
+  return true;
 };
 var getWordValidElements = function (editor) {
   var defaultValidElements =
@@ -1952,7 +1950,7 @@ function Plugin() {
   global.add("paste_onmail", function (editor) {
     if (hasProPlugin(editor) === false) {
       var draggingInternallyState = Cell(false);
-      var pasteFormat = Cell(isPasteAsTextEnabled(editor) ? "text" : "html");
+      var pasteFormat = Cell("html");
       var clipboard = Clipboard(editor, pasteFormat);
       var quirks = setup$2(editor);
       register$2(editor, clipboard);
