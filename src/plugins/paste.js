@@ -1158,7 +1158,6 @@ var readFilesAsDataUris = function (items) {
     map(items, function (item) {
       return new global$3(function (resolve) {
         var blob = isDataTransferItem(item) ? item.getAsFile() : item;
-        console.log(blob);
         var reader = new window.FileReader();
         reader.onload = function () {
           resolve({
