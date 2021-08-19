@@ -34,7 +34,7 @@ import { useLazyLoad } from "./ImageUpload/useLazyLoad";
 // import "tinymce/plugins/paste";
 // import 'tinymce/plugins/image';
 import "tinymce/plugins/lists";
-import "tinymce/plugins/autoresize";
+// import "tinymce/plugins/autoresize";
 // import 'tinymce/plugins/charmap';
 // import 'tinymce/plugins/hr';
 // import 'tinymce/plugins/anchor';
@@ -73,9 +73,8 @@ function App({
       .init({
         readonly: disabled,
         target: rootRef.current,
-        plugins: "lists autoresize spellchecker_onmail paste_onmail",
+        plugins: "lists spellchecker_onmail paste_onmail",
         init_instance_callback: (editor) => {
-          console.log(editor);
           console.log("init instance callback");
           editor.setContent(defaultValue);
 
@@ -125,7 +124,7 @@ function App({
         contextmenu: false,
         custom_ui_selector: ".custom-inline-strong",
         elementpath: false,
-        min_height: 300,
+        height: "5000",
 
         icons: "",
         preview_styles: false,

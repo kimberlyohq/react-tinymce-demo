@@ -36,7 +36,7 @@ export const useLazyLoad = (ref, editor, { root = null, threshold = 0 }) => {
             }
           });
         },
-        { root: null, threshold: 0 }
+        { root: null, threshold: 1.0 }
       );
 
       // set up observer for each image
