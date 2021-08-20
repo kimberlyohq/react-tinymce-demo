@@ -26,7 +26,7 @@ import {
   InsertLinkButton,
   InsertImageButton,
 } from "./Buttons";
-import { loadImages } from "./ImageUpload/utils";
+import { useLazyLoad } from "./ImageUpload/useLazyLoad";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
@@ -34,7 +34,7 @@ import { loadImages } from "./ImageUpload/utils";
 // import "tinymce/plugins/paste";
 // import 'tinymce/plugins/image';
 import "tinymce/plugins/lists";
-import "tinymce/plugins/autoresize";
+// import "tinymce/plugins/autoresize";
 // import 'tinymce/plugins/charmap';
 // import 'tinymce/plugins/hr';
 // import 'tinymce/plugins/anchor';
@@ -66,18 +66,18 @@ function App({
   const rootRef = useRef();
   const [editor, setEditor] = useState(null);
   const linkDialogRef = useRef();
+  useLazyLoad(editor, {});
+
   useEffect(() => {
     tinymce
       .init({
         readonly: disabled,
         target: rootRef.current,
-        plugins: "lists autoresize spellchecker_onmail paste_onmail",
+        plugins: "lists spellchecker_onmail paste_onmail",
         init_instance_callback: (editor) => {
           console.log("init instance callback");
           editor.setContent(defaultValue);
 
-          // TODO: parse the default value first before setting content
-          loadImages(editor);
           editor.undoManager.clear();
           editor.undoManager.add();
           editor.setDirty(false);
@@ -124,7 +124,8 @@ function App({
         contextmenu: false,
         custom_ui_selector: ".custom-inline-strong",
         elementpath: false,
-        min_height: 300,
+        // TODO: temp fix 
+        height: 5000,
 
         icons: "",
         preview_styles: false,
@@ -170,6 +171,7 @@ function App({
       editor && editor.destroy();
     };
   }, [editor]);
+
   return (
     <EditorContext.Provider value={editor}>
       {!!editor && (

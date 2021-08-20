@@ -138,10 +138,7 @@ export const loadImages = (editor) => {
     if (isInlineImage(node)) {
       await loadInlineImage(editor, node);
     } else {
-      const dataSrc = node.getAttribute("data-src");
-      node.setAttribute("src", dataSrc);
-      node.setAttribute("data-mce-src", dataSrc);
-      node.removeAttribute("data-src");
+      loadExternalImage(node);
     }
   });
 };
@@ -155,7 +152,7 @@ const loadInlineImage = async (editor, node) => {
   }
 };
 
-const fetchInlineImage = async (node, cid) => {
+export const fetchInlineImage = async (node, cid) => {
   try {
     const res = await fetch(`${FETCH_INLINE_IMAGE_URL}/${cid}`);
     await mockTimeout();
@@ -168,4 +165,11 @@ const fetchInlineImage = async (node, cid) => {
   } catch (err) {
     console.log(err);
   }
+};
+
+export const loadExternalImage = (node) => {
+  const dataSrc = node.getAttribute("data-src");
+  node.removeAttribute("data-src");
+  node.setAttribute("src", dataSrc);
+  node.setAttribute("data-mce-src", dataSrc);
 };
