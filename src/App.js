@@ -123,6 +123,10 @@ function App({
           editor.addShortcut("meta+shift+X", "Strikethrough", function () {
             editor.execCommand("Strikethrough");
           });
+
+          editor.addShortcut("meta+k", "Insert link", function () {
+            linkDialogRef.current.show();
+          });
         },
 
         branding: false,
