@@ -217,7 +217,6 @@ function App({
         remove_trailing_brs: true,
         //the formats will change the format recognize
         formats: {
-          ordered_list: { selector: "ol, li" },
           //  bold: {inline: "b"},
           // italic: { inline: 'i' },
           // underline: { inline: 'u'},
