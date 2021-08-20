@@ -118,13 +118,18 @@ function App({
             scope: "node",
             position: "node",
           });
+
+          // Keyboard shortcuts
+          editor.addShortcut("meta+shift+X", "Strikethrough", function () {
+            editor.execCommand("Strikethrough");
+          });
         },
 
         branding: false,
         contextmenu: false,
         custom_ui_selector: ".custom-inline-strong",
         elementpath: false,
-        // TODO: temp fix 
+        // TODO: temp fix
         height: 5000,
 
         icons: "",
