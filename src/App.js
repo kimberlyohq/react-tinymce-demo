@@ -147,19 +147,7 @@ function App({
               editor.execCommand("InsertUnorderedList");
             }
           });
-
-          editor.addShortcut("meta+shift+L", "Align left", function () {
-            editor.execCommand("JustifyLeft");
-          });
-
-          editor.addShortcut("meta+shift+R", "Align right", function () {
-            editor.execCommand("JustifyRight");
-          });
-
-          editor.addShortcut("meta+shift+E", "Align center", function () {
-            editor.execCommand("JustifyCenter");
-          });
-
+          
           editor.addShortcut("meta+220", "Remove format", function () {
             editor.execCommand("RemoveFormat");
           });
@@ -168,6 +156,10 @@ function App({
             "meta+shift+187",
             "Increase Font Size",
             function () {
+              const node = editor.selection.getNode();
+              const fontsize = editor.dom.getStyle(node, "font-size", true);
+
+              console.log(fontsize);
               editor.formatter.toggle("fontsize", { value: "large" });
             }
           );
@@ -176,6 +168,10 @@ function App({
             "meta+shift+189",
             "Decrease Font Size",
             function () {
+              const node = editor.selection.getNode();
+              const fontsize = editor.dom.getStyle(node, "font-size", true);
+
+              console.log(fontsize);
               editor.formatter.toggle("fontsize", { value: "x-small" });
             }
           );
