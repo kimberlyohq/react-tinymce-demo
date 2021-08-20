@@ -148,8 +148,20 @@ function App({
             }
           });
 
+          editor.addShortcut("meta+shift+L", "Align left", function () {
+            editor.execCommand("JustifyLeft");
+          });
+
+          editor.addShortcut("meta+shift+R", "Align right", function () {
+            editor.execCommand("JustifyRight");
+          });
+
+          editor.addShortcut("meta+shift+E", "Align center", function () {
+            editor.execCommand("JustifyCenter");
+          });
+
           editor.on("keydown", (event) => {
-            // doesnt work with add shortcut api
+            // Does not work with add shortcut api
             if (event.metaKey && event.key === "\\") {
               event.preventDefault();
               editor.execCommand("RemoveFormat");

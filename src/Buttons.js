@@ -83,7 +83,7 @@ export function BlueColorButton() {
 export function HighlightButton() {
   return (
     <MarkButton type="hilitecolor" value="#ffd41a">
-      Highlight color{" "}
+      Highlight color
     </MarkButton>
   );
 }
