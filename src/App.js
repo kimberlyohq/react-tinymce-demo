@@ -17,7 +17,9 @@ import {
   BlueColorButton,
   HighlightButton,
   SmallSizeButton,
+  NormalSizeButton,
   LargeSizeButton,
+  HugeSizeButton,
   RemoveFormatButton,
   BulletListButton,
   OrderListButton,
@@ -147,20 +149,45 @@ function App({
               editor.execCommand("InsertUnorderedList");
             }
           });
-          
+
           editor.addShortcut("meta+220", "Remove format", function () {
             editor.execCommand("RemoveFormat");
           });
+
+          const FONT_SIZES = ["10px", "13px", "18px", "32px"];
+          const FONT_SIZE_VALUE = {
+            "10px": "x-small",
+            "13px": "small",
+            "18px": "large",
+            "32px": "xx-large",
+          };
 
           editor.addShortcut(
             "meta+shift+187",
             "Increase Font Size",
             function () {
               const node = editor.selection.getNode();
-              const fontsize = editor.dom.getStyle(node, "font-size", true);
+              const currentFontSize = editor.dom.getStyle(
+                node,
+                "font-size",
+                true
+              );
 
-              console.log(fontsize);
-              editor.formatter.toggle("fontsize", { value: "large" });
+              if (currentFontSize === "32px") {
+                return;
+              }
+
+              const currFontSizeIndex = FONT_SIZES.indexOf(
+                currentFontSize ?? "13px"
+              );
+
+              const newFontSize = FONT_SIZES[currFontSizeIndex + 1];
+
+              editor.execCommand(
+                "FontSize",
+                false,
+                FONT_SIZE_VALUE[newFontSize]
+              );
             }
           );
 
@@ -169,10 +196,27 @@ function App({
             "Decrease Font Size",
             function () {
               const node = editor.selection.getNode();
-              const fontsize = editor.dom.getStyle(node, "font-size", true);
+              const currentFontSize = editor.dom.getStyle(
+                node,
+                "font-size",
+                true
+              );
 
-              console.log(fontsize);
-              editor.formatter.toggle("fontsize", { value: "x-small" });
+              if (currentFontSize === "10px") {
+                return;
+              }
+
+              const currFontSizeIndex = FONT_SIZES.indexOf(
+                currentFontSize ?? "13px"
+              );
+
+              const newFontSize = FONT_SIZES[currFontSizeIndex - 1];
+
+              editor.execCommand(
+                "FontSize",
+                false,
+                FONT_SIZE_VALUE[newFontSize]
+              );
             }
           );
 
@@ -206,7 +250,8 @@ function App({
 
         visual: false,
 
-        convert_fonts_to_spans: false,
+        convert_fonts_to_spans: true,
+        font_size_style_values: "x-small,small,large,xx-large",
         element_format: "html",
         forced_root_block: "div",
         //if set false the space key will not work
@@ -250,7 +295,9 @@ function App({
             <BlueColorButton />
             <HighlightButton />
             <SmallSizeButton />
+            <NormalSizeButton />
             <LargeSizeButton />
+            <HugeSizeButton />
             <RemoveFormatButton />
             <BulletListButton />
             <OrderListButton />

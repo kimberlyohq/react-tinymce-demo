@@ -88,10 +88,26 @@ export function HighlightButton() {
   );
 }
 
+export function HugeSizeButton() {
+  return (
+    <MarkButton type="fontsize" value="xx-large">
+      Huge size
+    </MarkButton>
+  );
+}
+
 export function LargeSizeButton() {
   return (
     <MarkButton type="fontsize" value="large">
       Large size
+    </MarkButton>
+  );
+}
+
+export function NormalSizeButton() {
+  return (
+    <MarkButton type="fontsize" value="small">
+      Normal size
     </MarkButton>
   );
 }
