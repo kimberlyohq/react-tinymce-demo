@@ -128,14 +128,23 @@ function App({
             linkDialogRef.current.show();
           });
 
+          editor.addShortcut("meta+shift+7", "Numbered List", function () {
+            console.log("numbered list");
+          });
+
+          editor.addShortcut("meta+shift+8", "Bulleted List", function () {
+            console.log("bulleted list");
+          });
+
           editor.on("keydown", (event) => {
+            // doesnt work with add shortcut api
             if (event.metaKey && event.key === "\\") {
               event.preventDefault();
               editor.execCommand("RemoveFormat");
             } else if (event.metaKey && event.key === "[") {
               event.preventDefault();
               editor.execCommand("Outdent");
-            } else if (event.metaKey && event.key === "]") {
+            } else if (event.metaKey && event.key === "9") {
               event.preventDefault();
               editor.execCommand("Indent");
             }
@@ -170,6 +179,7 @@ function App({
         remove_trailing_brs: true,
         //the formats will change the format recognize
         formats: {
+          ordered_list: { selector: "ol, li" },
           //  bold: {inline: "b"},
           // italic: { inline: 'i' },
           // underline: { inline: 'u'},
