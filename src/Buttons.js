@@ -128,6 +128,9 @@ export function RemoveFormatButton({ ...rest }) {
       onMouseDown={(e) => {
         e.preventDefault();
         editor.focus();
+        if (editor.selection.isCollapsed()) {
+          return;
+        }
         editor.formatter.toggle("removeformat");
       }}
     >

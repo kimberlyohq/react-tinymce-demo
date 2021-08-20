@@ -149,6 +149,9 @@ function App({
           });
 
           editor.addShortcut("meta+220", "Remove format", function () {
+            if (editor.selection.isCollapsed()) {
+              return;
+            }
             editor.execCommand("RemoveFormat");
           });
 
