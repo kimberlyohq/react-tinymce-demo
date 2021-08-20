@@ -171,6 +171,20 @@ function App({
             } else if (event.metaKey && event.key === "]") {
               event.preventDefault();
               editor.execCommand("Indent");
+            } else if (
+              event.metaKey &&
+              event.shiftKey &&
+              event.keyCode === 187
+            ) {
+              event.preventDefault();
+              console.log("increase font size");
+            } else if (
+              event.metaKey &&
+              event.shiftKey &&
+              event.keyCode === 189
+            ) {
+              event.preventDefault();
+              console.log("decrease font size");
             }
           });
         },
