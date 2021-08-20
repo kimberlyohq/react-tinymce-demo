@@ -127,6 +127,19 @@ function App({
           editor.addShortcut("meta+k", "Insert link", function () {
             linkDialogRef.current.show();
           });
+
+          editor.on("keydown", (event) => {
+            if (event.metaKey && event.key === "\\") {
+              event.preventDefault();
+              editor.execCommand("RemoveFormat");
+            } else if (event.metaKey && event.key === "[") {
+              event.preventDefault();
+              editor.execCommand("Outdent");
+            } else if (event.metaKey && event.key === "]") {
+              event.preventDefault();
+              editor.execCommand("Indent");
+            }
+          });
         },
 
         branding: false,
