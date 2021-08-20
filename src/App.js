@@ -125,7 +125,7 @@ function App({
         custom_ui_selector: ".custom-inline-strong",
         elementpath: false,
         // TODO: temp fix 
-        height: "5000",
+        height: 5000,
 
         icons: "",
         preview_styles: false,
