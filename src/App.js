@@ -248,8 +248,7 @@ function App({
 
         visual: false,
 
-        convert_fonts_to_spans: true,
-        font_size_style_values: "x-small,small,large,xx-large",
+        convert_fonts_to_spans: false,
         element_format: "html",
         forced_root_block: "div",
         //if set false the space key will not work
