@@ -179,12 +179,12 @@ function App({
 
             if (event.metaKey && event.shiftKey && event.keyCode === 187) {
               event.preventDefault();
-              console.log("increase font size");
+              editor.formatter.toggle("fontsize", { value: "large" });
             }
 
             if (event.metaKey && event.shiftKey && event.keyCode === 189) {
               event.preventDefault();
-              console.log("decrease font size");
+              editor.formatter.toggle("fontsize", { value: "x-small" });
             }
           });
         },
