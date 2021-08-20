@@ -130,6 +130,13 @@ function App({
 
           editor.addShortcut("meta+shift+7", "Numbered List", function () {
             console.log("numbered list");
+            const selection = editor.dom.getParents(editor.selection.getNode());
+            const isNumberedList = selection.some((node) => node === "li");
+            if (isNumberedList) {
+              editor.execCommand("RemoveList");
+            } else {
+              editor.execCommand("InsertOrderedList");
+            }
           });
 
           editor.addShortcut("meta+shift+8", "Bulleted List", function () {
