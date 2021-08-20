@@ -17,7 +17,9 @@ import {
   BlueColorButton,
   HighlightButton,
   SmallSizeButton,
+  NormalSizeButton,
   LargeSizeButton,
+  HugeSizeButton,
   RemoveFormatButton,
   BulletListButton,
   OrderListButton,
@@ -118,13 +120,118 @@ function App({
             scope: "node",
             position: "node",
           });
+
+          // Keyboard shortcuts
+          editor.addShortcut("meta+shift+X", "Strikethrough", function () {
+            editor.execCommand("Strikethrough");
+          });
+
+          editor.addShortcut("meta+k", "Insert link", function () {
+            linkDialogRef.current.show();
+          });
+
+          editor.addShortcut("meta+shift+7", "Numbered List", function () {
+            const selection = editor.dom.getParents(editor.selection.getNode());
+            const isNumberedList = selection.some((node) => node === "ol");
+            editor.execCommand("RemoveList");
+            if (!isNumberedList) {
+              editor.execCommand("InsertOrderedList");
+            }
+          });
+
+          editor.addShortcut("meta+shift+8", "Bulleted List", function () {
+            const selection = editor.dom.getParents(editor.selection.getNode());
+            const isBulletedList = selection.some((node) => node === "ul");
+            editor.execCommand("RemoveList");
+            if (!isBulletedList) {
+              editor.execCommand("InsertUnorderedList");
+            }
+          });
+
+          editor.addShortcut("meta+220", "Remove format", function () {
+            editor.execCommand("RemoveFormat");
+          });
+
+          const FONT_SIZES = ["10px", "13px", "18px", "32px"];
+          const FONT_SIZE_VALUE = {
+            "10px": "x-small",
+            "13px": "small",
+            "18px": "large",
+            "32px": "xx-large",
+          };
+
+          editor.addShortcut(
+            "meta+shift+187",
+            "Increase Font Size",
+            function () {
+              const node = editor.selection.getNode();
+              const currentFontSize = editor.dom.getStyle(
+                node,
+                "font-size",
+                true
+              );
+
+              if (currentFontSize === "32px") {
+                return;
+              }
+
+              const currFontSizeIndex = FONT_SIZES.indexOf(
+                currentFontSize ?? "13px"
+              );
+
+              const newFontSize = FONT_SIZES[currFontSizeIndex + 1];
+
+              editor.execCommand(
+                "FontSize",
+                false,
+                FONT_SIZE_VALUE[newFontSize]
+              );
+            }
+          );
+
+          editor.addShortcut(
+            "meta+shift+189",
+            "Decrease Font Size",
+            function () {
+              const node = editor.selection.getNode();
+              const currentFontSize = editor.dom.getStyle(
+                node,
+                "font-size",
+                true
+              );
+
+              if (currentFontSize === "10px") {
+                return;
+              }
+
+              const currFontSizeIndex = FONT_SIZES.indexOf(
+                currentFontSize ?? "13px"
+              );
+
+              const newFontSize = FONT_SIZES[currFontSizeIndex - 1];
+
+              editor.execCommand(
+                "FontSize",
+                false,
+                FONT_SIZE_VALUE[newFontSize]
+              );
+            }
+          );
+
+          editor.addShortcut("meta+221", "Indent More", function () {
+            editor.execCommand("Indent");
+          });
+
+          editor.addShortcut("meta+219", "Indent Less", function () {
+            editor.execCommand("Outdent");
+          });
         },
 
         branding: false,
         contextmenu: false,
         custom_ui_selector: ".custom-inline-strong",
         elementpath: false,
-        // TODO: temp fix 
+        // TODO: temp fix
         height: 5000,
 
         icons: "",
@@ -185,7 +292,9 @@ function App({
             <BlueColorButton />
             <HighlightButton />
             <SmallSizeButton />
+            <NormalSizeButton />
             <LargeSizeButton />
+            <HugeSizeButton />
             <RemoveFormatButton />
             <BulletListButton />
             <OrderListButton />

@@ -83,7 +83,15 @@ export function BlueColorButton() {
 export function HighlightButton() {
   return (
     <MarkButton type="hilitecolor" value="#ffd41a">
-      Highlight color{" "}
+      Highlight color
+    </MarkButton>
+  );
+}
+
+export function HugeSizeButton() {
+  return (
+    <MarkButton type="fontsize" value="xx-large">
+      Huge size
     </MarkButton>
   );
 }
@@ -92,6 +100,14 @@ export function LargeSizeButton() {
   return (
     <MarkButton type="fontsize" value="large">
       Large size
+    </MarkButton>
+  );
+}
+
+export function NormalSizeButton() {
+  return (
+    <MarkButton type="fontsize" value="small">
+      Normal size
     </MarkButton>
   );
 }
