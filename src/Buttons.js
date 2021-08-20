@@ -21,9 +21,24 @@ export function MarkButton({ type, children, value, onMouseDown, ...rest }) {
   useEffect(() => {
     const nodeChangeHander = (e) => {
       setActived(
-        e.parents.some((node) =>
-          editor.formatter.matchNode(node, type, value ? { value: value } : {})
-        )
+        e.parents.some((node) => {
+          const isMatchNode = editor.formatter.matchNode(
+            node,
+            type,
+            value ? { value: value } : {}
+          );
+
+          if (type !== "underline") {
+            return isMatchNode;
+          }
+
+          // check text-decoration
+          const isUnderlined = editor.dom
+            .getStyle(node, "text-decoration", true)
+            .includes("underline");
+
+          return isUnderlined || isMatchNode;
+        })
       );
     };
     editor.on("NodeChange", nodeChangeHander);
