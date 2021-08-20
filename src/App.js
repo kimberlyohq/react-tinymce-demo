@@ -129,7 +129,6 @@ function App({
           });
 
           editor.addShortcut("meta+shift+7", "Numbered List", function () {
-            console.log("numbered list");
             const selection = editor.dom.getParents(editor.selection.getNode());
             const isNumberedList = selection.some((node) => node === "li");
             if (isNumberedList) {
@@ -140,7 +139,13 @@ function App({
           });
 
           editor.addShortcut("meta+shift+8", "Bulleted List", function () {
-            console.log("bulleted list");
+            const selection = editor.dom.getParents(editor.selection.getNode());
+            const isNumberedList = selection.some((node) => node === "ol");
+            if (isNumberedList) {
+              editor.execCommand("RemoveList");
+            } else {
+              editor.execCommand("InsertUnorderedList");
+            }
           });
 
           editor.on("keydown", (event) => {
@@ -151,7 +156,7 @@ function App({
             } else if (event.metaKey && event.key === "[") {
               event.preventDefault();
               editor.execCommand("Outdent");
-            } else if (event.metaKey && event.key === "9") {
+            } else if (event.metaKey && event.key === "]") {
               event.preventDefault();
               editor.execCommand("Indent");
             }
