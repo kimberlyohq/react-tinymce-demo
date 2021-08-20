@@ -133,19 +133,17 @@ function App({
           editor.addShortcut("meta+shift+7", "Numbered List", function () {
             const selection = editor.dom.getParents(editor.selection.getNode());
             const isNumberedList = selection.some((node) => node === "ol");
-            if (isNumberedList) {
-              editor.execCommand("RemoveList");
-            } else {
+            editor.execCommand("RemoveList");
+            if (!isNumberedList) {
               editor.execCommand("InsertOrderedList");
             }
           });
 
           editor.addShortcut("meta+shift+8", "Bulleted List", function () {
             const selection = editor.dom.getParents(editor.selection.getNode());
-            const isNumberedList = selection.some((node) => node === "ul");
-            if (isNumberedList) {
-              editor.execCommand("RemoveList");
-            } else {
+            const isBulletedList = selection.some((node) => node === "ul");
+            editor.execCommand("RemoveList");
+            if (!isBulletedList) {
               editor.execCommand("InsertUnorderedList");
             }
           });
