@@ -160,32 +160,32 @@ function App({
             editor.execCommand("JustifyCenter");
           });
 
-          editor.on("keydown", (event) => {
-            // Does not work with add shortcut api
-            if (event.metaKey && event.key === "\\") {
-              event.preventDefault();
-              editor.execCommand("RemoveFormat");
-            }
+          editor.addShortcut("meta+220", "Remove format", function () {
+            editor.execCommand("RemoveFormat");
+          });
 
-            if (event.metaKey && event.key === "[") {
-              event.preventDefault();
-              editor.execCommand("Outdent");
-            }
-
-            if (event.metaKey && event.key === "]") {
-              event.preventDefault();
-              editor.execCommand("Indent");
-            }
-
-            if (event.metaKey && event.shiftKey && event.keyCode === 187) {
-              event.preventDefault();
+          editor.addShortcut(
+            "meta+shift+187",
+            "Increase Font Size",
+            function () {
               editor.formatter.toggle("fontsize", { value: "large" });
             }
+          );
 
-            if (event.metaKey && event.shiftKey && event.keyCode === 189) {
-              event.preventDefault();
+          editor.addShortcut(
+            "meta+shift+189",
+            "Decrease Font Size",
+            function () {
               editor.formatter.toggle("fontsize", { value: "x-small" });
             }
+          );
+
+          editor.addShortcut("meta+221", "Indent More", function () {
+            editor.execCommand("Indent");
+          });
+
+          editor.addShortcut("meta+219", "Indent Less", function () {
+            editor.execCommand("Outdent");
           });
         },
 
