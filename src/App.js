@@ -132,7 +132,7 @@ function App({
 
           editor.addShortcut("meta+shift+7", "Numbered List", function () {
             const selection = editor.dom.getParents(editor.selection.getNode());
-            const isNumberedList = selection.some((node) => node === "li");
+            const isNumberedList = selection.some((node) => node === "ol");
             if (isNumberedList) {
               editor.execCommand("RemoveList");
             } else {
@@ -142,7 +142,7 @@ function App({
 
           editor.addShortcut("meta+shift+8", "Bulleted List", function () {
             const selection = editor.dom.getParents(editor.selection.getNode());
-            const isNumberedList = selection.some((node) => node === "ol");
+            const isNumberedList = selection.some((node) => node === "ul");
             if (isNumberedList) {
               editor.execCommand("RemoveList");
             } else {
