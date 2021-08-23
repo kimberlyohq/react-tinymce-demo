@@ -29,7 +29,7 @@ import {
   InsertImageButton,
 } from "./Buttons";
 import { useLazyLoad } from "./ImageUpload/useLazyLoad";
-import { removeLink, openLink, getLinkNode } from "./link/utils";
+import { removeLink, openLink, getLinkNode, isLinkNode } from "./link/utils";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
@@ -113,12 +113,12 @@ function App({
             },
           });
 
-          var isLinkNode = function (link) {
+          var isLinkNodePredicate = function (link) {
             return editor.dom.is(link, "a") && editor.getBody().contains(link);
           };
 
           editor.ui.registry.addContextToolbar("table", {
-            predicate: isLinkNode,
+            predicate: isLinkNodePredicate,
             items: "linkedit | linkopen | linkremove",
             scope: "node",
             position: "node",
@@ -130,6 +130,13 @@ function App({
           });
 
           editor.addShortcut("meta+k", "Insert link", function () {
+            // check if current selection is a link node
+            const isLinkedNode = isLinkNode(editor, editor.selection.getNode());
+            console.log(isLinkedNode);
+            if (isLinkedNode) {
+              editor.execCommand("Unlink");
+              return;
+            }
             linkDialogRef.current.show();
           });
 
@@ -151,13 +158,13 @@ function App({
             }
           });
 
+          // cmd + \
           editor.addShortcut("meta+220", "Remove format", function () {
             if (editor.selection.isCollapsed()) {
               return;
             }
 
             editor.execCommand("RemoveFormat");
-      
           });
 
           const FONT_SIZES = ["10px", "13px", "18px", "32px"];
@@ -168,6 +175,7 @@ function App({
             "32px": "xx-large",
           };
 
+          // cmd + '+'
           editor.addShortcut(
             "meta+shift+187",
             "Increase Font Size",
@@ -197,6 +205,7 @@ function App({
             }
           );
 
+          // cmd + '-'
           editor.addShortcut(
             "meta+shift+189",
             "Decrease Font Size",
@@ -226,10 +235,12 @@ function App({
             }
           );
 
+          // cmd + ]
           editor.addShortcut("meta+221", "Indent More", function () {
             editor.execCommand("Indent");
           });
 
+          // cmd + [
           editor.addShortcut("meta+219", "Indent Less", function () {
             editor.execCommand("Outdent");
           });
@@ -339,7 +350,20 @@ function App({
             <OrderListButton />
             <IndentMoreButton />
             <IndentLessButton />
-            <InsertLinkButton onClick={() => linkDialogRef.current.show()} />
+            <InsertLinkButton
+              onClick={() => {
+                // check if current selection is a link node
+                const isLinkedNode = isLinkNode(
+                  editor,
+                  editor.selection.getNode()
+                );
+                if (isLinkedNode) {
+                  editor.execCommand("Unlink");
+                  return;
+                }
+                linkDialogRef.current.show();
+              }}
+            />
             <InsertImageButton />
           </div>
         </>
