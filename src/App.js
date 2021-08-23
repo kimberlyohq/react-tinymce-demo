@@ -103,7 +103,13 @@ function App({
           });
           editor.ui.registry.addButton("linkopen", {
             text: "open link",
-            onAction: () => {},
+            onAction: () => {
+              const linkNode = editor.dom
+                .getParents(editor.selection.getNode())
+                .find((node) => node.nodeName === "A");
+              const url = linkNode.getAttribute("href");
+              window.open(url, "_blank");
+            },
           });
           editor.ui.registry.addButton("linkremove", {
             text: "remove link",
@@ -230,6 +236,7 @@ function App({
           });
         },
 
+        relative_urls: false,
         branding: false,
         contextmenu: false,
         custom_ui_selector: ".custom-inline-strong",
