@@ -236,6 +236,37 @@ export const IndentLessButton = () => {
   );
 };
 
+export const SizeButton = () => {
+  const editor = useContext(EditorContext);
+  const [size, setSize] = useState("13px");
+  const handleChange = (event) => {
+    const selectedSize = event.target.value;
+    editor.execCommand("FontSize", false, selectedSize);
+  };
+
+  useEffect(() => {
+    const nodeChangeHander = (e) => {
+      const node = editor.selection.getNode();
+      const currentFontSize = editor.dom.getStyle(node, "font-size", true);
+      setSize(currentFontSize ?? "13px");
+    };
+
+    editor.on("NodeChange", nodeChangeHander);
+    return () => {
+      editor.off("NodeChange", nodeChangeHander);
+    };
+  }, []);
+
+  return (
+    <select value={size} onChange={handleChange}>
+      <option value="10px">Small</option>
+      <option value="13px">Normal</option>
+      <option value="18px">Large</option>
+      <option value="32px">Huge</option>
+    </select>
+  );
+};
+
 export const InsertImageButton = () => {
   const editor = useContext(EditorContext);
   const inputRef = useRef();

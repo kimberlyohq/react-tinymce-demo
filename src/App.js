@@ -27,6 +27,7 @@ import {
   IndentLessButton,
   InsertLinkButton,
   InsertImageButton,
+  SizeButton,
 } from "./Buttons";
 import { useLazyLoad } from "./ImageUpload/useLazyLoad";
 import { removeLink, openLink, getLinkNode, isLinkNode } from "./link/utils";
@@ -350,6 +351,7 @@ function App({
             <OrderListButton />
             <IndentMoreButton />
             <IndentLessButton />
+            <SizeButton />
             <InsertLinkButton
               onClick={() => {
                 // check if current selection is a link node
