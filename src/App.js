@@ -239,6 +239,7 @@ function App({
         },
 
         relative_urls: false,
+        extended_valid_elements: "span",
         branding: false,
         contextmenu: false,
         custom_ui_selector: ".custom-inline-strong",
