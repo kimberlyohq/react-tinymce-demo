@@ -29,6 +29,7 @@ import {
   InsertImageButton,
 } from "./Buttons";
 import { useLazyLoad } from "./ImageUpload/useLazyLoad";
+import { removeLink, openLink, getLinkNode } from "./link/utils";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
@@ -93,9 +94,7 @@ function App({
           editor.ui.registry.addButton("linkedit", {
             text: "edit link",
             onAction: () => {
-              const linkNode = editor.dom
-                .getParents(editor.selection.getNode())
-                .find((node) => node.nodeName === "A");
+              const linkNode = getLinkNode(editor);
               const linkContent = linkNode.text;
               const linkHref = linkNode.getAttribute("href");
               linkDialogRef.current.show(linkContent, linkHref);
@@ -104,22 +103,13 @@ function App({
           editor.ui.registry.addButton("linkopen", {
             text: "open link",
             onAction: () => {
-              const linkNode = editor.dom
-                .getParents(editor.selection.getNode())
-                .find((node) => node.nodeName === "A");
-              const url = linkNode.getAttribute("href");
-              window.open(url, "_blank");
+              openLink(editor);
             },
           });
           editor.ui.registry.addButton("linkremove", {
             text: "remove link",
             onAction: () => {
-              const linkNode = editor.dom
-                .getParents(editor.selection.getNode())
-                .find((node) => node.nodeName === "A");
-
-              const domQuery = tinymce.dom.DomQuery(linkNode);
-              domQuery.replaceWith(linkNode.childNodes);
+              removeLink(editor);
             },
           });
 
@@ -166,6 +156,11 @@ function App({
               return;
             }
             editor.execCommand("RemoveFormat");
+            const node = editor.selection.getNode();
+
+            if (isLinkNode(node)) {
+              removeLink(editor);
+            }
           });
 
           const FONT_SIZES = ["10px", "13px", "18px", "32px"];
