@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import { EditorContext } from "./EditorContext";
 import { uploadImages } from "./ImageUpload/utils";
-import { isLinkNode, removeLink } from "./link/utils";
 
 export function MarkButton({ type, children, value, onMouseDown, ...rest }) {
   const editor = useContext(EditorContext);
