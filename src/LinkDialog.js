@@ -73,12 +73,14 @@ function LinkDialog({}, ref) {
         placeholder="text"
         defaultValue={defaultContent}
         ref={textRef}
+        autoFocus={!defaultContent}
       />
       <input
         type="text"
         placeholder="href"
         defaultValue={defaultLink}
         ref={hrefRef}
+        autoFocus={!!defaultLink}
       />
       <button
         onClick={() => {
