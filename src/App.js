@@ -113,7 +113,14 @@ function App({
           });
           editor.ui.registry.addButton("linkremove", {
             text: "remove link",
-            onAction: () => {},
+            onAction: () => {
+              const linkNode = editor.dom
+                .getParents(editor.selection.getNode())
+                .find((node) => node.nodeName === "A");
+
+              const domQuery = tinymce.dom.DomQuery(linkNode);
+              domQuery.replaceWith(linkNode.childNodes);
+            },
           });
 
           var isLinkNode = function (link) {
