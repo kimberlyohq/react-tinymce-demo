@@ -53,10 +53,6 @@ export function MarkButton({ type, children, value, onMouseDown, ...rest }) {
       onMouseDown={(e) => {
         e.preventDefault();
 
-        if (editor.selection.isCollapsed()) {
-          return;
-        }
-
         editor.focus();
         editor.formatter.toggle(type, value ? { value: value } : undefined);
       }}
