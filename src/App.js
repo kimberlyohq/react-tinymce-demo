@@ -29,6 +29,7 @@ import {
   InsertImageButton,
 } from "./Buttons";
 import { useLazyLoad } from "./ImageUpload/useLazyLoad";
+import { removeLink, openLink, getLinkNode } from "./link/utils";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
@@ -93,9 +94,7 @@ function App({
           editor.ui.registry.addButton("linkedit", {
             text: "edit link",
             onAction: () => {
-              const linkNode = editor.dom
-                .getParents(editor.selection.getNode())
-                .find((node) => node.nodeName === "A");
+              const linkNode = getLinkNode(editor);
               const linkContent = linkNode.text;
               const linkHref = linkNode.getAttribute("href");
               linkDialogRef.current.show(linkContent, linkHref);
@@ -103,11 +102,15 @@ function App({
           });
           editor.ui.registry.addButton("linkopen", {
             text: "open link",
-            onAction: () => {},
+            onAction: () => {
+              openLink(editor);
+            },
           });
           editor.ui.registry.addButton("linkremove", {
             text: "remove link",
-            onAction: () => {},
+            onAction: () => {
+              removeLink(editor);
+            },
           });
 
           var isLinkNode = function (link) {
@@ -152,7 +155,9 @@ function App({
             if (editor.selection.isCollapsed()) {
               return;
             }
+
             editor.execCommand("RemoveFormat");
+      
           });
 
           const FONT_SIZES = ["10px", "13px", "18px", "32px"];
@@ -230,6 +235,7 @@ function App({
           });
         },
 
+        relative_urls: false,
         branding: false,
         contextmenu: false,
         custom_ui_selector: ".custom-inline-strong",
@@ -262,6 +268,36 @@ function App({
           // italic: { inline: 'i' },
           // underline: { inline: 'u'},
           // strikethrough: { inline: 'strike' },
+          removeformat: [
+            {
+              selector:
+                "b,strong,em,italic,font,underline,strike,s,sub,sup,dfn,code,samp,kbd,var,cite,mark,q,del,ins,small",
+              remove: "all",
+              split: true,
+              block_expand: true,
+              expand: false,
+              deep: true,
+            },
+            {
+              selector: "span",
+              attributes: ["style", "class"],
+              remove: "empty",
+              split: true,
+              expand: false,
+              deep: true,
+            },
+            {
+              selector: "a",
+              remove: "all",
+            },
+            {
+              selector: "*",
+              attributes: ["style", "class"],
+              split: false,
+              expand: false,
+              deep: true,
+            },
+          ],
         },
 
         browser_spellcheck: true,

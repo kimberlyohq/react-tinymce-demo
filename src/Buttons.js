@@ -146,7 +146,8 @@ export function RemoveFormatButton({ ...rest }) {
         if (editor.selection.isCollapsed()) {
           return;
         }
-        editor.formatter.toggle("removeformat");
+        editor.execCommand("RemoveFormat")
+ 
       }}
     >
       Remove format
