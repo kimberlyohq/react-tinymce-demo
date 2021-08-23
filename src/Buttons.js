@@ -147,12 +147,8 @@ export function RemoveFormatButton({ ...rest }) {
         if (editor.selection.isCollapsed()) {
           return;
         }
-        editor.formatter.toggle("removeformat");
-        const node = editor.selection.getNode();
-
-        if (isLinkNode(editor, node)) {
-          removeLink(editor);
-        }
+        editor.execCommand("RemoveFormat")
+ 
       }}
     >
       Remove format

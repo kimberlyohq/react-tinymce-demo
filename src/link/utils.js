@@ -2,8 +2,14 @@ import tinymce from "tinymce";
 
 export const removeLink = (editor) => {
   const linkNode = getLinkNode(editor);
+
   const domQuery = tinymce.dom.DomQuery(linkNode);
-  domQuery.replaceWith(linkNode.childNodes);
+  //domQuery.replaceWith(linkNode.childNodes);
+  domQuery.unwrap();
+  editor.undoManager.transact(() => domQuery.replaceWith(linkNode.childNodes));
+  editor.undoManager.transact(() =>
+    editor.formatter.remove("link", {}, linkNode)
+  );
 };
 
 export const openLink = (editor) => {

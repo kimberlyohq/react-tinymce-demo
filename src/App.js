@@ -155,12 +155,9 @@ function App({
             if (editor.selection.isCollapsed()) {
               return;
             }
-            editor.execCommand("RemoveFormat");
-            const node = editor.selection.getNode();
 
-            if (isLinkNode(node)) {
-              removeLink(editor);
-            }
+            editor.execCommand("RemoveFormat");
+      
           });
 
           const FONT_SIZES = ["10px", "13px", "18px", "32px"];
@@ -239,7 +236,6 @@ function App({
         },
 
         relative_urls: false,
-        extended_valid_elements: "span",
         branding: false,
         contextmenu: false,
         custom_ui_selector: ".custom-inline-strong",
@@ -272,6 +268,36 @@ function App({
           // italic: { inline: 'i' },
           // underline: { inline: 'u'},
           // strikethrough: { inline: 'strike' },
+          removeformat: [
+            {
+              selector:
+                "b,strong,em,italic,font,underline,strike,s,sub,sup,dfn,code,samp,kbd,var,cite,mark,q,del,ins,small",
+              remove: "all",
+              split: true,
+              block_expand: true,
+              expand: false,
+              deep: true,
+            },
+            {
+              selector: "span",
+              attributes: ["style", "class"],
+              remove: "empty",
+              split: true,
+              expand: false,
+              deep: true,
+            },
+            {
+              selector: "a",
+              remove: "all",
+            },
+            {
+              selector: "*",
+              attributes: ["style", "class"],
+              split: false,
+              expand: false,
+              deep: true,
+            },
+          ],
         },
 
         browser_spellcheck: true,
