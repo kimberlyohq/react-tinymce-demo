@@ -21,10 +21,12 @@ function LinkDialog({}, ref) {
   const handleSure = () => {
     editor.focus();
     if (editor.selection.isCollapsed()) {
+      const text = textRef.current.value;
+      const href = hrefRef.current.value;
       editor.execCommand(
         "mceInsertContent",
         false,
-        `<a href="http://google.com">test</a>`
+        `<a href="${href}">${text}</a>`
       );
     } else {
       editor.execCommand("mceInsertLink", false, hrefRef.current.value);
