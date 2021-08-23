@@ -19,7 +19,7 @@ export function MarkButton({ type, children, value, onMouseDown, ...rest }) {
   });
 
   useEffect(() => {
-    const nodeChangeHander = (e) => {
+    const nodeChangeHandler = (e) => {
       setActived(
         e.parents.some((node) => {
           const isMatchNode = editor.formatter.matchNode(
@@ -41,9 +41,9 @@ export function MarkButton({ type, children, value, onMouseDown, ...rest }) {
         })
       );
     };
-    editor.on("NodeChange", nodeChangeHander);
+    editor.on("NodeChange", nodeChangeHandler);
     return () => {
-      editor.off("NodeChange", nodeChangeHander);
+      editor.off("NodeChange", nodeChangeHandler);
     };
   }, []);
 
@@ -102,37 +102,6 @@ export function HighlightButton() {
   );
 }
 
-export function HugeSizeButton() {
-  return (
-    <MarkButton type="fontsize" value="xx-large">
-      Huge size
-    </MarkButton>
-  );
-}
-
-export function LargeSizeButton() {
-  return (
-    <MarkButton type="fontsize" value="large">
-      Large size
-    </MarkButton>
-  );
-}
-
-export function NormalSizeButton() {
-  return (
-    <MarkButton type="fontsize" value="small">
-      Normal size
-    </MarkButton>
-  );
-}
-
-export function SmallSizeButton() {
-  return (
-    <MarkButton type="fontsize" value="x-small">
-      Small size
-    </MarkButton>
-  );
-}
 export function RemoveFormatButton({ ...rest }) {
   const editor = useContext(EditorContext);
 
@@ -170,13 +139,13 @@ function ListButton({ type, children }) {
   );
 
   useEffect(() => {
-    const nodeChangeHander = (e) => {
+    const nodeChangeHandler = (e) => {
       setActived(getActived(e));
     };
 
-    editor.on("NodeChange", nodeChangeHander);
+    editor.on("NodeChange", nodeChangeHandler);
     return () => {
-      editor.off("NodeChange", nodeChangeHander);
+      editor.off("NodeChange", nodeChangeHandler);
     };
   }, []);
 
@@ -236,24 +205,26 @@ export const IndentLessButton = () => {
   );
 };
 
+const DEFAULT_FONT_SIZE = "13px";
+
 export const SizeButton = () => {
   const editor = useContext(EditorContext);
-  const [size, setSize] = useState("13px");
+  const [size, setSize] = useState(DEFAULT_FONT_SIZE);
   const handleChange = (event) => {
     const selectedSize = event.target.value;
     editor.execCommand("FontSize", false, selectedSize);
   };
 
   useEffect(() => {
-    const nodeChangeHander = (e) => {
+    const nodeChangeHandler = (e) => {
       const node = editor.selection.getNode();
       const currentFontSize = editor.dom.getStyle(node, "font-size", true);
-      setSize(currentFontSize ?? "13px");
+      setSize(currentFontSize ?? DEFAULT_FONT_SIZE);
     };
 
-    editor.on("NodeChange", nodeChangeHander);
+    editor.on("NodeChange", nodeChangeHandler);
     return () => {
-      editor.off("NodeChange", nodeChangeHander);
+      editor.off("NodeChange", nodeChangeHandler);
     };
   }, []);
 

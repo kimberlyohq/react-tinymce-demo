@@ -16,10 +16,6 @@ import {
   RedColorButton,
   BlueColorButton,
   HighlightButton,
-  SmallSizeButton,
-  NormalSizeButton,
-  LargeSizeButton,
-  HugeSizeButton,
   RemoveFormatButton,
   BulletListButton,
   OrderListButton,
@@ -342,10 +338,6 @@ function App({
             <RedColorButton />
             <BlueColorButton />
             <HighlightButton />
-            <SmallSizeButton />
-            <NormalSizeButton />
-            <LargeSizeButton />
-            <HugeSizeButton />
             <RemoveFormatButton />
             <BulletListButton />
             <OrderListButton />
