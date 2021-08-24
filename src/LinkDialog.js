@@ -23,12 +23,22 @@ function LinkDialog({}, ref) {
     if (editor.selection.isCollapsed()) {
       const text = textRef.current.value;
       const href = hrefRef.current.value;
-      editor.execCommand(
-        "mceInsertContent",
-        false,
-        `<a href="${href}">${text}</a>`
-      );
+
+      if (!defaultContent && !defaultLink) {
+        editor.execCommand(
+          "mceInsertContent",
+          false,
+          `<a href="${href}">${text}</a>`
+        );
+        return;
+      }
+
+      // update current node
+      const linkNode = editor.selection.getNode();
+      editor.dom.setAttribs(linkNode, { href, "data-mce-href": href });
+      linkNode.text = text;
     } else {
+      console.log("NOT COLLAPSED");
       editor.execCommand("mceInsertLink", false, hrefRef.current.value);
     }
 
