@@ -27,6 +27,7 @@ import { useLazyLoad } from "./image/useLazyLoad";
 import { removeLink, openLink, getLinkNode } from "./link/utils";
 import LinkDialog from "./LinkDialog";
 import { EditorContext } from "./EditorContext";
+import { SIZES } from "./constants";
 // Plugins
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
@@ -168,14 +169,6 @@ export default function Editor({
             editor.execCommand("RemoveFormat");
           });
 
-          const FONT_SIZES = ["10px", "13px", "18px", "32px"];
-          const FONT_SIZE_VALUE = {
-            "10px": "x-small",
-            "13px": "small",
-            "18px": "large",
-            "32px": "xx-large",
-          };
-
           // cmd + '+'
           editor.addShortcut(
             "meta+shift+187",
@@ -192,17 +185,13 @@ export default function Editor({
                 return;
               }
 
-              const currFontSizeIndex = FONT_SIZES.indexOf(
+              const currFontSizeIndex = SIZES.indexOf(
                 currentFontSize ?? "13px"
               );
 
-              const newFontSize = FONT_SIZES[currFontSizeIndex + 1];
+              const newFontSize = SIZES[currFontSizeIndex + 1];
 
-              editor.execCommand(
-                "FontSize",
-                false,
-                FONT_SIZE_VALUE[newFontSize]
-              );
+              editor.execCommand("FontSize", false, newFontSize);
             }
           );
 
@@ -222,17 +211,13 @@ export default function Editor({
                 return;
               }
 
-              const currFontSizeIndex = FONT_SIZES.indexOf(
+              const currFontSizeIndex = SIZES.indexOf(
                 currentFontSize ?? "13px"
               );
 
-              const newFontSize = FONT_SIZES[currFontSizeIndex - 1];
+              const newFontSize = SIZES[currFontSizeIndex - 1];
 
-              editor.execCommand(
-                "FontSize",
-                false,
-                FONT_SIZE_VALUE[newFontSize]
-              );
+              editor.execCommand("FontSize", false, newFontSize);
             }
           );
 
