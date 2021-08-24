@@ -54,7 +54,7 @@ export function MarkButton({ type, children, value, onMouseDown, ...rest }) {
         e.preventDefault();
 
         editor.focus();
-        editor.formatter.toggle(type, value ? { value: value } : undefined);
+        editor.execCommand(type, false, value);
       }}
       style={{ color: actived ? "blue" : "black" }}
     >
