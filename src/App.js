@@ -62,12 +62,13 @@ function App({
   autoFocus = true,
   onChange,
   defaultValue = "",
+  type,
+  options,
 }) {
   const rootRef = useRef();
   const [editor, setEditor] = useState(null);
   const linkDialogRef = useRef();
   useLazyLoad(editor, {});
-
   useEffect(() => {
     tinymce
       .init({
