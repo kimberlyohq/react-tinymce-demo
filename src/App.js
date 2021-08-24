@@ -55,6 +55,7 @@ import "tinymce/plugins/lists";
 // import contentUiCss from '!!raw-loader!tinymce/skins/ui/oxide/content.min.css';
 import "./plugins/spellchecker";
 import "./plugins/paste";
+import { EDITOR_TYPES } from "./constants";
 import contentStyle from "!!raw-loader!./contentStyle.css";
 
 function App({
@@ -315,6 +316,10 @@ function App({
         images_reuse_filename: true,
         autoresize_bottom_margin: 0,
         object_resizing: "img",
+        images_dataimg_filter: function (img) {
+          // prevent conversion of base64 images to blobs
+          return type === EDITOR_TYPES.compose;
+        },
       })
       .then((editors) => {
         console.log("init complete");
