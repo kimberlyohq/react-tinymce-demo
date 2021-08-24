@@ -28,6 +28,12 @@ export const App = () => {
     uploadInlineImages(editor, images);
   };
 
+  const handleUploadImage = (event, editor) => {
+    if (!event.target.files.length) return;
+    const files = event.target.files;
+    uploadBase64Images(editor, files);
+  };
+
   return (
     <Editor
       initialValue={initialValue}
@@ -36,9 +42,9 @@ export const App = () => {
       options={{
         enableImageBlobConversion: enableImageBlobConversion,
         enableInsertImageButton: true,
-        onUploadImage: uploadBase64Images,
         onShowLinkDialog: handleLinkDialog,
         onPaste: handlePaste,
+        onUploadImage: handleUploadImage,
       }}
     />
   );

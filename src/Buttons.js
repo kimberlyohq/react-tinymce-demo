@@ -238,13 +238,11 @@ export const SizeButton = () => {
   );
 };
 
-export const InsertImageButton = (onUpload) => {
+export const InsertImageButton = ({ onUpload }) => {
   const editor = useContext(EditorContext);
   const inputRef = useRef();
   const handleUpload = async (e) => {
-    if (!e.target.files.length) return;
-    const files = e.target.files;
-    uploadBase64Images(editor, files);
+    onUpload(e, editor);
     inputRef.current.value = "";
   };
   return (

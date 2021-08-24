@@ -69,6 +69,7 @@ export default function Editor({
     enableInsertImageButton,
     onShowLinkDialog,
     onPaste,
+    onUploadImage,
   },
 }) {
   const rootRef = useRef();
@@ -348,7 +349,9 @@ export default function Editor({
             <IndentLessButton />
             <SizeButton />
             <InsertLinkButton onClick={() => onShowLinkDialog(editor)} />
-            {enableInsertImageButton && <InsertImageButton />}
+            {enableInsertImageButton && (
+              <InsertImageButton onUpload={onUploadImage} />
+            )}
           </div>
         </>
       )}
