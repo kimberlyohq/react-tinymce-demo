@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import "intersection-observer";
-import { fetchInlineImage, loadExternalImage } from "./utils";
+
+import { INLINE_IMG_ATTR, EXTERNAL_IMG_ATTR } from "./constants";
 
 const defaultConfig = { root: null, threshold: 0 };
 
-export const useLazyLoad = (editor, config = defaultConfig) => {
+export const useLazyLoad = (editor, onLoadImage, config = defaultConfig) => {
   useEffect(() => {
     if (editor) {
       const externalImages = Array.from(editor.dom.select("img[data-src]"));
@@ -19,15 +20,17 @@ export const useLazyLoad = (editor, config = defaultConfig) => {
           // already loaded
           if (!!node.getAttribute("src")) return;
 
-          // external images
-          if (node.getAttribute("data-src")) {
-            loadExternalImage(node);
-            observer.unobserve(node);
-          } else {
-            // inline images
-            fetchInlineImage(node, node.getAttribute("data-cid"));
-            observer.unobserve(node);
-          }
+          new Promise((_, reject) => {
+            // external images
+            if (node.getAttribute("data-src")) {
+              onLoadImage(node, EXTERNAL_IMG_ATTR).catch((err) => reject(err));
+              observer.unobserve(node);
+            } else {
+              // inline images
+              onLoadImage(node, INLINE_IMG_ATTR).catch((err) => reject(err));
+              observer.unobserve(node);
+            }
+          }).catch((err) => console.log(err));
         });
       }, config);
 

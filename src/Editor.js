@@ -60,22 +60,24 @@ import contentStyle from "!!raw-loader!./contentStyle.css";
 export default function Editor({
   linkDialogRef,
   disabled = false,
-  autoFocus = true,
-  onChange,
   initialValue = "",
   defaultValue = "",
   type,
+  onChange,
+  onKeyDown,
   options: {
+    autoFocus = true,
     enableImageBlobConversion,
     enableInsertImageButton,
     onShowLinkDialog,
     onPaste,
     onUploadImage,
+    onLoadImage,
   },
 }) {
   const rootRef = useRef();
   const [editor, setEditor] = useState(null);
-  useLazyLoad(editor, {});
+  useLazyLoad(editor, onLoadImage, {});
   useEffect(() => {
     tinymce
       .init({

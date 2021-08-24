@@ -3,7 +3,13 @@ import Editor from "./Editor";
 /* eslint import/no-webpack-loader-syntax: off */
 import initialValue from "!!raw-loader!./test.html";
 import { EDITOR_TYPES } from "./constants";
-import { uploadInlineImages, uploadBase64Images } from "./image/utils";
+import {
+  uploadInlineImages,
+  uploadBase64Images,
+  loadExternalImage,
+  loadInlineImage,
+} from "./image/utils";
+import { INLINE_IMG_ATTR, EXTERNAL_IMG_ATTR } from "./image/constants";
 import { isLinkNode } from "./link/utils";
 
 export const App = () => {
@@ -19,19 +25,35 @@ export const App = () => {
     linkDialogRef.current.show();
   };
 
-  const handlePaste = (event, editor) => {
+  const handlePaste = async (event, editor) => {
     const images = event.clipboardData.files;
     if (images.length === 0) {
       return;
     }
     event.preventDefault();
-    uploadInlineImages(editor, images);
+    try {
+      await uploadInlineImages(editor, images);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  const handleUploadImage = (event, editor) => {
+  const handleUploadImage = async (event, editor) => {
     if (!event.target.files.length) return;
     const files = event.target.files;
-    uploadBase64Images(editor, files);
+    try {
+      await uploadBase64Images(editor, files);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleLoadImage = (node, type) => {
+    if (type === INLINE_IMG_ATTR) {
+      loadInlineImage(node);
+    } else if (type === EXTERNAL_IMG_ATTR) {
+      loadExternalImage(node);
+    }
   };
 
   return (
@@ -45,6 +67,7 @@ export const App = () => {
         onShowLinkDialog: handleLinkDialog,
         onPaste: handlePaste,
         onUploadImage: handleUploadImage,
+        onLoadImage: handleLoadImage,
       }}
     />
   );

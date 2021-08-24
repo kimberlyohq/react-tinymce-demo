@@ -99,17 +99,23 @@ const mockTimeout = async () => {
 };
 
 export const uploadInlineImages = (editor, files) => {
-  [...files].forEach(async (file) => {
-    const id = uuid();
-    editor.selection.setNode(
-      editor.dom.create("img", {
-        src: PHOTO_LOADING_SRC,
-        id,
-        width: 100,
-        height: 100,
-      })
-    );
-    await insertInlineImage(editor, file, id);
+  return new Promise((_, reject) => {
+    [...files].forEach(async (file) => {
+      try {
+        const id = uuid();
+        editor.selection.setNode(
+          editor.dom.create("img", {
+            src: PHOTO_LOADING_SRC,
+            id,
+            width: 100,
+            height: 100,
+          })
+        );
+        await insertInlineImage(editor, file, id);
+      } catch (err) {
+        reject(err);
+      }
+    });
   });
 };
 
@@ -137,66 +143,56 @@ export const insertInlineImage = async (editor, file, id) => {
   }
 };
 
-export const loadImages = (editor) => {
-  const imageNodes = editor.dom.select("img");
-
-  if (imageNodes.length === 0) {
-    return;
-  }
-
-  const isInlineImage = (node) => node.hasAttribute("data-cid");
-
-  imageNodes.forEach(async (node) => {
-    if (isInlineImage(node)) {
-      await loadInlineImage(editor, node);
-    } else {
-      loadExternalImage(node);
+export const loadInlineImage = (node) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const cid = node.getAttribute("data-cid");
+      const res = await fetch(`${FETCH_INLINE_IMAGE_URL}/${cid}`);
+      await mockTimeout();
+      const fileBlob = await res.blob();
+      const src = URL.createObjectURL(fileBlob);
+      node.setAttribute("src", src);
+      node.setAttribute("data-mce-src", src);
+      node.setAttribute("cid", cid);
+      node.removeAttribute("data-cid");
+      resolve();
+    } catch (err) {
+      reject(err);
     }
   });
 };
 
-const loadInlineImage = async (editor, node) => {
-  try {
-    const cid = node.getAttribute("data-cid");
-    await fetchInlineImage(node, cid);
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const fetchInlineImage = async (node, cid) => {
-  try {
-    const res = await fetch(`${FETCH_INLINE_IMAGE_URL}/${cid}`);
-    await mockTimeout();
-    const fileBlob = await res.blob();
-    const src = URL.createObjectURL(fileBlob);
-    node.setAttribute("src", src);
-    node.setAttribute("data-mce-src", src);
-    node.setAttribute("cid", cid);
-    node.removeAttribute("data-cid");
-  } catch (err) {
-    console.log(err);
-  }
-};
-
 export const loadExternalImage = (node) => {
-  const dataSrc = node.getAttribute("data-src");
-  node.removeAttribute("data-src");
-  node.setAttribute("src", dataSrc);
-  node.setAttribute("data-mce-src", dataSrc);
+  return new Promise((resolve, reject) => {
+    try {
+      const dataSrc = node.getAttribute("data-src");
+      node.removeAttribute("data-src");
+      node.setAttribute("src", dataSrc);
+      node.setAttribute("data-mce-src", dataSrc);
+      resolve();
+    } catch (err) {
+      reject(err);
+    }
+  });
 };
 
 export const uploadBase64Images = (editor, files) => {
-  [...files].forEach(async (file) => {
-    const src = URL.createObjectURL(file);
-    const size = await getUploadImageSize(src);
-    const base64Encoding = await getImageBase64(file);
+  return new Promise((resolve, reject) => {
+    [...files].forEach(async (file) => {
+      try {
+        const src = URL.createObjectURL(file);
+        const size = await getUploadImageSize(src);
+        const base64Encoding = await getImageBase64(file);
 
-    editor.selection.setNode(
-      editor.dom.create("img", {
-        src: base64Encoding,
-        ...size,
-      })
-    );
+        editor.selection.setNode(
+          editor.dom.create("img", {
+            src: base64Encoding,
+            ...size,
+          })
+        );
+      } catch (err) {
+        reject(err);
+      }
+    });
   });
 };
