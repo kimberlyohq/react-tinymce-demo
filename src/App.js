@@ -95,7 +95,6 @@ function App({
               return;
             }
             event.preventDefault();
-            console.log(onUploadImg)
             onUploadImg(editor, images);
           });
         },
@@ -375,7 +374,7 @@ function App({
                 linkDialogRef.current.show();
               }}
             />
-            <InsertImageButton onUpload={onUploadImg} />
+            <InsertImageButton />
           </div>
         </>
       )}

@@ -191,13 +191,12 @@ export const uploadDataImages = (editor, files) => {
     const src = URL.createObjectURL(file);
     const size = await getUploadImageSize(src);
     const base64Encoding = await getImageBase64(file);
-    if (base64Encoding && size) {
-      editor.selection.setNode(
-        editor.dom.create("img", {
-          src: base64Encoding,
-          ...size,
-        })
-      );
-    }
+
+    editor.selection.setNode(
+      editor.dom.create("img", {
+        src: base64Encoding,
+        ...size,
+      })
+    );
   });
 };
