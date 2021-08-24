@@ -76,7 +76,7 @@ function App({
       .init({
         readonly: disabled,
         target: rootRef.current,
-        plugins: "lists spellchecker_onmail",
+        plugins: "lists spellchecker_onmail paste_onmail",
         init_instance_callback: (editor) => {
           console.log("init instance callback");
           editor.setContent(defaultValue);
