@@ -54,7 +54,6 @@ import "tinymce/plugins/lists";
 // import contentCss from '!!raw-loader!tinymce/skins/content/default/content.min.css';
 // import contentUiCss from '!!raw-loader!tinymce/skins/ui/oxide/content.min.css';
 import "./plugins/spellchecker";
-import "./plugins/paste";
 import { EDITOR_TYPES } from "./constants";
 import contentStyle from "!!raw-loader!./contentStyle.css";
 
@@ -76,7 +75,7 @@ function App({
       .init({
         readonly: disabled,
         target: rootRef.current,
-        plugins: "lists spellchecker_onmail paste_onmail",
+        plugins: "lists spellchecker_onmail",
         init_instance_callback: (editor) => {
           console.log("init instance callback");
           editor.setContent(defaultValue);
