@@ -16,10 +16,6 @@ import {
   RedColorButton,
   BlueColorButton,
   HighlightButton,
-  SmallSizeButton,
-  NormalSizeButton,
-  LargeSizeButton,
-  HugeSizeButton,
   RemoveFormatButton,
   BulletListButton,
   OrderListButton,
@@ -27,6 +23,7 @@ import {
   IndentLessButton,
   InsertLinkButton,
   InsertImageButton,
+  SizeButton,
 } from "./Buttons";
 import { useLazyLoad } from "./ImageUpload/useLazyLoad";
 import { removeLink, openLink, getLinkNode, isLinkNode } from "./link/utils";
@@ -341,15 +338,12 @@ function App({
             <RedColorButton />
             <BlueColorButton />
             <HighlightButton />
-            <SmallSizeButton />
-            <NormalSizeButton />
-            <LargeSizeButton />
-            <HugeSizeButton />
             <RemoveFormatButton />
             <BulletListButton />
             <OrderListButton />
             <IndentMoreButton />
             <IndentLessButton />
+            <SizeButton />
             <InsertLinkButton
               onClick={() => {
                 // check if current selection is a link node
