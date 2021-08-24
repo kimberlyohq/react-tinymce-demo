@@ -1202,7 +1202,7 @@ var pasteImageData = function (editor, e, rng) {
           editor.selection.setRng(rng);
         }
         each(fileResults, function (result) {
-          pasteImage(editor, result);
+          // pasteImage(editor, result);
         });
       });
       return true;

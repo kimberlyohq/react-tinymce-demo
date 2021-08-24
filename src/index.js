@@ -9,7 +9,7 @@ import { EDITOR_TYPES } from './constants'
 
 ReactDOM.render(
   <React.StrictMode>
-    <App defaultValue={defaultValue} type={EDITOR_TYPES.signature} options={{
+    <App defaultValue={defaultValue} type={EDITOR_TYPES.compose} options={{
       onLoadImg: () => {},
       onUploadImg: () => {},
 

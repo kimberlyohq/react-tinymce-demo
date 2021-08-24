@@ -98,7 +98,7 @@ const mockTimeout = async () => {
   });
 };
 
-export const uploadImages = (editor, files) => {
+export const uploadInlineImages = (editor, files) => {
   [...files].forEach(async (file) => {
     const id = uuid();
     editor.selection.setNode(

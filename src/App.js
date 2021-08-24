@@ -26,6 +26,7 @@ import {
   SizeButton,
 } from "./Buttons";
 import { useLazyLoad } from "./ImageUpload/useLazyLoad";
+import { uploadDataImages, uploadInlineImages } from "./ImageUpload/utils";
 import { removeLink, openLink, getLinkNode, isLinkNode } from "./link/utils";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
@@ -87,6 +88,21 @@ function App({
           autoFocus && editor.focus();
 
           setEditor(editor);
+
+          editor.on("paste", (event) => {
+            const images = event.clipboardData.files;
+            console.log(images);
+            if (images.length === 0) {
+              return;
+            }
+            event.preventDefault();
+            if (type !== EDITOR_TYPES.compose) {
+              uploadDataImages(editor, images);
+            } else {
+              // handle as inline images
+              uploadInlineImages(editor, images);
+            }
+          });
         },
         setup: (editor) => {
           console.log("setup");
