@@ -25,27 +25,19 @@ export const App = () => {
     linkDialogRef.current.show();
   };
 
-  const handlePaste = async (event, editor) => {
+  const handlePaste = (event, editor) => {
     const images = event.clipboardData.files;
     if (images.length === 0) {
       return;
     }
     event.preventDefault();
-    try {
-      await uploadInlineImages(editor, images);
-    } catch (err) {
-      console.log(err);
-    }
+    uploadInlineImages(editor, images);
   };
 
   const handleUploadImage = async (event, editor) => {
     if (!event.target.files.length) return;
     const files = event.target.files;
-    try {
-      await uploadBase64Images(editor, files);
-    } catch (err) {
-      console.log(err);
-    }
+    uploadBase64Images(editor, files);
   };
 
   const handleLoadImage = (node, type) => {

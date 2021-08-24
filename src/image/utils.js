@@ -99,23 +99,17 @@ const mockTimeout = async () => {
 };
 
 export const uploadInlineImages = (editor, files) => {
-  return new Promise((_, reject) => {
-    [...files].forEach(async (file) => {
-      try {
-        const id = uuid();
-        editor.selection.setNode(
-          editor.dom.create("img", {
-            src: PHOTO_LOADING_SRC,
-            id,
-            width: 100,
-            height: 100,
-          })
-        );
-        await insertInlineImage(editor, file, id);
-      } catch (err) {
-        reject(err);
-      }
-    });
+  [...files].forEach(async (file) => {
+    const id = uuid();
+    editor.selection.setNode(
+      editor.dom.create("img", {
+        src: PHOTO_LOADING_SRC,
+        id,
+        width: 100,
+        height: 100,
+      })
+    );
+    await insertInlineImage(editor, file, id);
   });
 };
 
@@ -143,56 +137,40 @@ export const insertInlineImage = async (editor, file, id) => {
   }
 };
 
-export const loadInlineImage = (node) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const cid = node.getAttribute("data-cid");
-      const res = await fetch(`${FETCH_INLINE_IMAGE_URL}/${cid}`);
-      await mockTimeout();
-      const fileBlob = await res.blob();
-      const src = URL.createObjectURL(fileBlob);
-      node.setAttribute("src", src);
-      node.setAttribute("data-mce-src", src);
-      node.setAttribute("cid", cid);
-      node.removeAttribute("data-cid");
-      resolve();
-    } catch (err) {
-      reject(err);
-    }
-  });
+export const loadInlineImage = async (node) => {
+  try {
+    const cid = node.getAttribute("data-cid");
+    const res = await fetch(`${FETCH_INLINE_IMAGE_URL}/${cid}`);
+    await mockTimeout();
+    const fileBlob = await res.blob();
+    const src = URL.createObjectURL(fileBlob);
+    node.setAttribute("src", src);
+    node.setAttribute("data-mce-src", src);
+    node.setAttribute("cid", cid);
+    node.removeAttribute("data-cid");
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 export const loadExternalImage = (node) => {
-  return new Promise((resolve, reject) => {
-    try {
-      const dataSrc = node.getAttribute("data-src");
-      node.removeAttribute("data-src");
-      node.setAttribute("src", dataSrc);
-      node.setAttribute("data-mce-src", dataSrc);
-      resolve();
-    } catch (err) {
-      reject(err);
-    }
-  });
+  const dataSrc = node.getAttribute("data-src");
+  node.removeAttribute("data-src");
+  node.setAttribute("src", dataSrc);
+  node.setAttribute("data-mce-src", dataSrc);
 };
 
 export const uploadBase64Images = (editor, files) => {
-  return new Promise((resolve, reject) => {
-    [...files].forEach(async (file) => {
-      try {
-        const src = URL.createObjectURL(file);
-        const size = await getUploadImageSize(src);
-        const base64Encoding = await getImageBase64(file);
+  [...files].forEach(async (file) => {
+    const src = URL.createObjectURL(file);
+    const size = await getUploadImageSize(src);
+    const base64Encoding = await getImageBase64(file);
 
-        editor.selection.setNode(
-          editor.dom.create("img", {
-            src: base64Encoding,
-            ...size,
-          })
-        );
-      } catch (err) {
-        reject(err);
-      }
-    });
+    editor.selection.setNode(
+      editor.dom.create("img", {
+        src: base64Encoding,
+        ...size,
+      })
+    );
   });
 };

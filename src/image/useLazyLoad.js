@@ -20,17 +20,15 @@ export const useLazyLoad = (editor, onLoadImage, config = defaultConfig) => {
           // already loaded
           if (!!node.getAttribute("src")) return;
 
-          new Promise((_, reject) => {
-            // external images
-            if (node.getAttribute("data-src")) {
-              onLoadImage(node, EXTERNAL_IMG_ATTR).catch((err) => reject(err));
-              observer.unobserve(node);
-            } else {
-              // inline images
-              onLoadImage(node, INLINE_IMG_ATTR).catch((err) => reject(err));
-              observer.unobserve(node);
-            }
-          }).catch((err) => console.log(err));
+          // external images
+          if (node.getAttribute(EXTERNAL_IMG_ATTR)) {
+            onLoadImage(node, EXTERNAL_IMG_ATTR);
+            observer.unobserve(node);
+          } else {
+            // inline images
+            onLoadImage(node, INLINE_IMG_ATTR);
+            observer.unobserve(node);
+          }
         });
       }, config);
 
