@@ -26,7 +26,6 @@ import {
   SizeButton,
 } from "./Buttons";
 import { useLazyLoad } from "./ImageUpload/useLazyLoad";
-import { uploadDataImages, uploadInlineImages } from "./ImageUpload/utils";
 import { removeLink, openLink, getLinkNode, isLinkNode } from "./link/utils";
 // importing the plugin js.
 // import 'tinymce/plugins/advlist';
@@ -67,6 +66,7 @@ function App({
   type,
   options,
 }) {
+  const { onLoadImg, onUploadImg } = options;
   const rootRef = useRef();
   const [editor, setEditor] = useState(null);
   const linkDialogRef = useRef();
@@ -76,7 +76,7 @@ function App({
       .init({
         readonly: disabled,
         target: rootRef.current,
-        plugins: "lists spellchecker_onmail paste_onmail",
+        plugins: "lists spellchecker_onmail",
         init_instance_callback: (editor) => {
           console.log("init instance callback");
           editor.setContent(defaultValue);
@@ -91,17 +91,12 @@ function App({
 
           editor.on("paste", (event) => {
             const images = event.clipboardData.files;
-            console.log(images);
             if (images.length === 0) {
               return;
             }
             event.preventDefault();
-            if (type !== EDITOR_TYPES.compose) {
-              uploadDataImages(editor, images);
-            } else {
-              // handle as inline images
-              uploadInlineImages(editor, images);
-            }
+            console.log(onUploadImg)
+            onUploadImg(editor, images);
           });
         },
         setup: (editor) => {
@@ -380,7 +375,7 @@ function App({
                 linkDialogRef.current.show();
               }}
             />
-            <InsertImageButton />
+            <InsertImageButton onUpload={onUploadImg} />
           </div>
         </>
       )}
