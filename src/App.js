@@ -42,9 +42,9 @@ export const App = () => {
 
   const handleLoadImage = (node, type) => {
     if (type === INLINE_IMG_ATTR) {
-      loadInlineImage(node);
+      return loadInlineImage(node);
     } else if (type === EXTERNAL_IMG_ATTR) {
-      loadExternalImage(node);
+      return loadExternalImage(node);
     }
   };
 

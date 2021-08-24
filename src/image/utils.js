@@ -134,27 +134,17 @@ export const uploadInlineImages = async (editor, files) => {
   });
 };
 
-export const loadInlineImage = async (node) => {
-  try {
-    const cid = node.getAttribute("data-cid");
-    const res = await fetch(`${FETCH_INLINE_IMAGE_URL}/${cid}`);
-    await mockTimeout();
-    const fileBlob = await res.blob();
-    const src = URL.createObjectURL(fileBlob);
-    node.setAttribute("src", src);
-    node.setAttribute("data-mce-src", src);
-    node.setAttribute("cid", cid);
-    node.removeAttribute("data-cid");
-  } catch (err) {
-    console.log(err);
-  }
+export const loadInlineImage = (node) => {
+  const cid = node.getAttribute("data-cid");
+  return fetch(`${FETCH_INLINE_IMAGE_URL}/${cid}`).then((response) =>
+    response.blob()
+  );
 };
 
 export const loadExternalImage = (node) => {
-  const dataSrc = node.getAttribute("data-src");
-  node.removeAttribute("data-src");
-  node.setAttribute("src", dataSrc);
-  node.setAttribute("data-mce-src", dataSrc);
+  return new Promise((resolve, reject) => {
+    resolve(node.getAttribute("data-src"));
+  });
 };
 
 export const uploadBase64Images = async (editor, files) => {
