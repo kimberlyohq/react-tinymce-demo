@@ -5,10 +5,15 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 /* eslint import/no-webpack-loader-syntax: off */
 import defaultValue from '!!raw-loader!./test.html'
+import { EDITOR_TYPES } from './constants'
 
 ReactDOM.render(
   <React.StrictMode>
-    <App defaultValue={defaultValue} />
+    <App defaultValue={defaultValue} type={EDITOR_TYPES.compose} options={{
+      onLoadImg: () => {},
+      onUploadImg: () => {},
+
+    }} />
   </React.StrictMode>,
   document.getElementById('root')
 );
