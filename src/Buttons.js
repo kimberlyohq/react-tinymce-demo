@@ -6,7 +6,7 @@ import React, {
   useRef,
 } from "react";
 import { EditorContext } from "./EditorContext";
-import { uploadBase64Images } from "./ImageUpload/utils";
+import { uploadBase64Images } from "./image/utils";
 
 export function MarkButton({ type, children, value, onMouseDown, ...rest }) {
   const editor = useContext(EditorContext);
@@ -238,7 +238,7 @@ export const SizeButton = () => {
   );
 };
 
-export const InsertImageButton = () => {
+export const InsertImageButton = (onUpload) => {
   const editor = useContext(EditorContext);
   const inputRef = useRef();
   const handleUpload = async (e) => {
