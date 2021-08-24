@@ -7,9 +7,6 @@
  * Version: 5.8.1 (2021-05-20)
  */
 import tinymce from "tinymce/tinymce";
-import { v4 as uuid } from "uuid";
-import { PHOTO_LOADING_SRC } from "../ImageUpload/constants";
-import { insertInlineImage } from "../ImageUpload/utils";
 
 var Cell = function (initial) {
   var value = initial;
@@ -342,15 +339,7 @@ var getValidate = function (editor) {
 var getAllowHtmlDataUrls = function (editor) {
   return editor.getParam("allow_html_data_urls", false, "boolean");
 };
-var getPasteDataImages = function (editor) {
-  return true;
-};
-var getImagesDataImgFilter = function (editor) {
-  return editor.getParam("images_dataimg_filter");
-};
-var getImagesReuseFilename = function (editor) {
-  return editor.getParam("images_reuse_filename");
-};
+
 var getForcedRootBlock = function (editor) {
   return editor.getParam("forced_root_block");
 };
@@ -495,44 +484,6 @@ var innerText = function (html) {
   html = filter$1(html, [/<!\[[^\]]+\]>/g]);
   walk(domParser.parse(html));
   return text;
-};
-var trimHtml = function (html) {
-  var trimSpaces = function (all, s1, s2) {
-    if (!s1 && !s2) {
-      return " ";
-    }
-    return nbsp;
-  };
-  html = filter$1(html, [
-    /^[\s\S]*<body[^>]*>\s*|\s*<\/body[^>]*>[\s\S]*$/gi,
-    /<!--StartFragment-->|<!--EndFragment-->/g,
-    [/( ?)<span class="Apple-converted-space">\u00a0<\/span>( ?)/g, trimSpaces],
-    /<br class="Apple-interchange-newline">/g,
-    /<br>$/i,
-  ]);
-  return html;
-};
-var createIdGenerator = function (prefix) {
-  var count = 0;
-  return function () {
-    return prefix + count++;
-  };
-};
-var getImageMimeType = function (ext) {
-  var lowerExt = ext.toLowerCase();
-  var mimeOverrides = {
-    jpg: "jpeg",
-    jpe: "jpeg",
-    jfi: "jpeg",
-    jif: "jpeg",
-    jfif: "jpeg",
-    pjpeg: "jpeg",
-    pjp: "jpeg",
-    svg: "svg+xml",
-  };
-  return global$5.hasOwn(mimeOverrides, lowerExt)
-    ? "image/" + mimeOverrides[lowerExt]
-    : "image/" + lowerExt;
 };
 
 var isWordContent = function (content) {
@@ -1086,130 +1037,7 @@ var hasHtmlOrText = function (content) {
     hasContentType(content, "text/plain")
   );
 };
-var parseDataUri = function (uri) {
-  var matches = /data:([^;]+);base64,([a-z0-9\+\/=]+)/i.exec(uri);
-  if (matches) {
-    return {
-      type: matches[1],
-      data: decodeURIComponent(matches[2]),
-    };
-  } else {
-    return {
-      type: null,
-      data: null,
-    };
-  }
-};
-var isValidDataUriImage = function (editor, imgElm) {
-  var filter = getImagesDataImgFilter(editor);
-  return filter ? filter(imgElm) : true;
-};
-var extractFilename = function (editor, str) {
-  var m = str.match(/([\s\S]+?)(?:\.[a-z0-9.]+)$/i);
-  return isNonNullable(m) ? editor.dom.encode(m[1]) : null;
-};
-var uniqueId = createIdGenerator("mceclip");
 
-var pasteImage = function (editor, imageItem) {
-  const id = uuid();
-  // insert the placeholder image
-  pasteHtml$1(
-    editor,
-    `<img id=${id} src=${PHOTO_LOADING_SRC} width=100 height=100>`,
-    false
-  );
-  // hit the api endpoint to upload the image
-  var file = imageItem.blob;
-
-  var img = new Image();
-  img.src = imageItem.uri;
-  if (isValidDataUriImage(editor, img)) {
-    insertInlineImage(editor, file, id);
-    // TODO: investigate what this is for (i think paste is moving the caching logic to upload)
-    //   var _a = parseDataUri(imageItem.uri),
-    //      base64 = _a.data,
-    //     type = _a.type;
-    //   var id = uniqueId();
-    // var blobCache = editor.editorUpload.blobCache;
-    // var blobInfo = void 0;
-    // var existingBlobInfo = blobCache.getByData(base64, type);
-    // if (!existingBlobInfo) {
-    //   var useFileName =
-    //     getImagesReuseFilename(editor) && isNonNullable(file.name);
-    //   var name_1 = useFileName ? extractFilename(editor, file.name) : id;
-    //   var filename = useFileName ? file.name : undefined;
-    //   blobInfo = blobCache.create(id, file, base64, name_1, filename);
-    //   blobCache.add(blobInfo);
-    // } else {
-    //   blobInfo = existingBlobInfo;
-    // }
-  } else {
-    pasteHtml$1(editor, `<img src=${imageItem.uri}>`, false);
-  }
-};
-var isClipboardEvent = function (event) {
-  return event.type === "paste";
-};
-var isDataTransferItem = function (item) {
-  return isNonNullable(item.getAsFile);
-};
-var readFilesAsDataUris = function (items) {
-  return global$3.all(
-    map(items, function (item) {
-      return new global$3(function (resolve) {
-        var blob = isDataTransferItem(item) ? item.getAsFile() : item;
-        var reader = new window.FileReader();
-        reader.onload = function () {
-          resolve({
-            blob: blob,
-            uri: reader.result,
-          });
-        };
-        reader.readAsDataURL(blob);
-      });
-    })
-  );
-};
-var isImage = function (editor) {
-  var allowedExtensions = getAllowedImageFileTypes(editor);
-  return function (file) {
-    return (
-      startsWith(file.type, "image/") &&
-      exists(allowedExtensions, function (extension) {
-        return getImageMimeType(extension) === file.type;
-      })
-    );
-  };
-};
-var getImagesFromDataTransfer = function (editor, dataTransfer) {
-  var items = dataTransfer.items
-    ? map(from$1(dataTransfer.items), function (item) {
-        return item.getAsFile();
-      })
-    : [];
-  var files = dataTransfer.files ? from$1(dataTransfer.files) : [];
-  return filter(items.length > 0 ? items : files, isImage(editor));
-};
-var pasteImageData = function (editor, e, rng) {
-  var dataTransfer = isClipboardEvent(e) ? e.clipboardData : e.dataTransfer;
-  if (getPasteDataImages(editor) && dataTransfer) {
-    // File object
-    var images = getImagesFromDataTransfer(editor, dataTransfer);
-    if (images.length > 0) {
-      e.preventDefault();
-      readFilesAsDataUris(images).then(function (fileResults) {
-        if (rng) {
-          editor.selection.setRng(rng);
-        }
-        each(fileResults, function (result) {
-          // pasteImage(editor, result);
-        });
-      });
-      return true;
-    }
-  }
-  return false;
-};
 var isBrokenAndroidClipboardEvent = function (e) {
   var clipboardData = e.clipboardData;
   return (
@@ -1324,8 +1152,7 @@ var registerEventHandlers = function (editor, pasteBin, pasteFormat) {
       return;
     }
     if (
-      !hasHtmlOrText(clipboardContent) &&
-      pasteImageData(editor, e, getLastRng())
+      !hasHtmlOrText(clipboardContent)
     ) {
       pasteBin.remove();
       return;
@@ -1392,7 +1219,7 @@ var registerEventsAndFilters = function (editor, pasteBin, pasteFormat) {
     var isDataUri = function (src) {
       return src.indexOf("data:") === 0;
     };
-    if (!getPasteDataImages(editor) && isPasteInsert(args)) {
+    if (isPasteInsert(args)) {
       var i = nodes.length;
       while (i--) {
         src = nodes[i].attr("src");
@@ -1555,9 +1382,6 @@ var Clipboard = function (editor, pasteFormat) {
     },
     pasteText: function (text) {
       return pasteText(editor, text);
-    },
-    pasteImageData: function (e, rng) {
-      return pasteImageData(editor, e, rng);
     },
     getDataTransferItems: getDataTransferItems,
     hasHtmlOrText: hasHtmlOrText,
