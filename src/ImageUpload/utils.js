@@ -186,7 +186,7 @@ export const loadExternalImage = (node) => {
   node.setAttribute("data-mce-src", dataSrc);
 };
 
-export const uploadDataImages = (editor, files) => {
+export const uploadBase64Images = (editor, files) => {
   [...files].forEach(async (file) => {
     const src = URL.createObjectURL(file);
     const size = await getUploadImageSize(src);
