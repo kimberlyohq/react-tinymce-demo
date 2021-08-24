@@ -80,13 +80,25 @@ function getBestFitSize({ width, height }) {
   }
 }
 
+const getImageBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => resolve(reader.result);
+
+    reader.onerror = (e) => reject(e);
+
+    reader.readAsDataURL(file);
+  });
+};
+
 const mockTimeout = async () => {
   await new Promise((resolve) => {
     setTimeout(resolve, 2000);
   });
 };
 
-export const uploadImages = (editor, files) => {
+export const uploadInlineImages = (editor, files) => {
   [...files].forEach(async (file) => {
     const id = uuid();
     editor.selection.setNode(
@@ -172,4 +184,19 @@ export const loadExternalImage = (node) => {
   node.removeAttribute("data-src");
   node.setAttribute("src", dataSrc);
   node.setAttribute("data-mce-src", dataSrc);
+};
+
+export const uploadBase64Images = (editor, files) => {
+  [...files].forEach(async (file) => {
+    const src = URL.createObjectURL(file);
+    const size = await getUploadImageSize(src);
+    const base64Encoding = await getImageBase64(file);
+
+    editor.selection.setNode(
+      editor.dom.create("img", {
+        src: base64Encoding,
+        ...size,
+      })
+    );
+  });
 };

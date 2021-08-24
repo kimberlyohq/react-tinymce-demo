@@ -54,7 +54,7 @@ import "tinymce/plugins/lists";
 // import contentCss from '!!raw-loader!tinymce/skins/content/default/content.min.css';
 // import contentUiCss from '!!raw-loader!tinymce/skins/ui/oxide/content.min.css';
 import "./plugins/spellchecker";
-import "./plugins/paste";
+import { EDITOR_TYPES } from "./constants";
 import contentStyle from "!!raw-loader!./contentStyle.css";
 
 function App({
@@ -62,18 +62,20 @@ function App({
   autoFocus = true,
   onChange,
   defaultValue = "",
+  type,
+  options,
 }) {
+  const { onLoadImg, onUploadImg } = options;
   const rootRef = useRef();
   const [editor, setEditor] = useState(null);
   const linkDialogRef = useRef();
   useLazyLoad(editor, {});
-
   useEffect(() => {
     tinymce
       .init({
         readonly: disabled,
         target: rootRef.current,
-        plugins: "lists spellchecker_onmail paste_onmail",
+        plugins: "lists spellchecker_onmail",
         init_instance_callback: (editor) => {
           console.log("init instance callback");
           editor.setContent(defaultValue);
@@ -85,6 +87,15 @@ function App({
           autoFocus && editor.focus();
 
           setEditor(editor);
+
+          editor.on("paste", (event) => {
+            const images = event.clipboardData.files;
+            if (images.length === 0) {
+              return;
+            }
+            event.preventDefault();
+            onUploadImg(editor, images);
+          });
         },
         setup: (editor) => {
           console.log("setup");
@@ -314,6 +325,10 @@ function App({
         images_reuse_filename: true,
         autoresize_bottom_margin: 0,
         object_resizing: "img",
+        images_dataimg_filter: function (img) {
+          // prevent conversion of base64 images to blobs
+          return type === EDITOR_TYPES.compose;
+        },
       })
       .then((editors) => {
         console.log("init complete");
