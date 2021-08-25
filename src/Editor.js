@@ -99,6 +99,10 @@ export default function Editor({
           editor.on("paste", (event) => {
             onPaste(event, editor);
           });
+
+          editor.on("keydown", (event) => {
+            onKeyDown(event, editor);
+          });
         },
         setup: (editor) => {
           console.log("setup");
@@ -205,10 +209,6 @@ export default function Editor({
               HOTKEYS_COMMAND["Outdent"](editor);
             }
           );
-
-          editor.on("keydown", (event) => {
-            onKeyDown(event, editor);
-          });
         },
 
         relative_urls: false,
