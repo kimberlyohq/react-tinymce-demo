@@ -27,7 +27,7 @@ import { useLazyLoad } from "./image/useLazyLoad";
 import { removeLink, openLink, getLinkNode } from "./link/utils";
 import LinkDialog from "./LinkDialog";
 import { EditorContext } from "./EditorContext";
-import { SIZES } from "./constants";
+import { HOTKEYS_COMMAND, HOTKEYS_PATTERN } from "./constants";
 // Plugins
 // import 'tinymce/plugins/advlist';
 // import 'tinymce/plugins/autolink';
@@ -102,6 +102,7 @@ export default function Editor({
         },
         setup: (editor) => {
           console.log("setup");
+
           editor.ui.registry.addButton("linkedit", {
             text: "edit link",
             onAction: () => {
@@ -136,102 +137,78 @@ export default function Editor({
           });
 
           // Keyboard shortcuts
-          editor.addShortcut("meta+shift+X", "Strikethrough", function () {
-            editor.execCommand("Strikethrough");
-          });
+          editor.addShortcut(
+            HOTKEYS_PATTERN["Strikethrough"],
+            "Strikethrough",
+            function () {
+              HOTKEYS_COMMAND["Strikethrough"](editor);
+            }
+          );
 
           editor.addShortcut("meta+k", "Insert link", function () {
             onShowLinkDialog(editor);
           });
 
-          editor.addShortcut("meta+shift+7", "Numbered List", function () {
-            const selection = editor.dom.getParents(editor.selection.getNode());
-            const isNumberedList = selection.some((node) => node === "ol");
-            editor.execCommand("RemoveList");
-            if (!isNumberedList) {
-              editor.execCommand("InsertOrderedList");
+          editor.addShortcut(
+            HOTKEYS_PATTERN["NumberedList"],
+            "Numbered List",
+            function () {
+              HOTKEYS_COMMAND["NumberedList"](editor);
             }
-          });
+          );
 
-          editor.addShortcut("meta+shift+8", "Bulleted List", function () {
-            const selection = editor.dom.getParents(editor.selection.getNode());
-            const isBulletedList = selection.some((node) => node === "ul");
-            editor.execCommand("RemoveList");
-            if (!isBulletedList) {
-              editor.execCommand("InsertUnorderedList");
+          editor.addShortcut(
+            HOTKEYS_PATTERN["BulletedList"],
+            "Bulleted List",
+            function () {
+              HOTKEYS_COMMAND["BulletedList"](editor);
             }
-          });
+          );
 
           // cmd + \
-          editor.addShortcut("meta+220", "Remove format", function () {
-            if (editor.selection.isCollapsed()) {
-              return;
+          editor.addShortcut(
+            HOTKEYS_PATTERN["RemoveFormat"],
+            "Remove Format",
+            function () {
+              HOTKEYS_COMMAND["RemoveFormat"](editor);
             }
-
-            editor.execCommand("RemoveFormat");
-          });
+          );
 
           // cmd + '+'
           editor.addShortcut(
-            "meta+shift+187",
+            HOTKEYS_PATTERN["IncreaseFontSize"],
             "Increase Font Size",
             function () {
-              const node = editor.selection.getNode();
-              const currentFontSize = editor.dom.getStyle(
-                node,
-                "font-size",
-                true
-              );
-
-              if (currentFontSize === "32px") {
-                return;
-              }
-
-              const currFontSizeIndex = SIZES.indexOf(
-                currentFontSize ?? "13px"
-              );
-
-              const newFontSize = SIZES[currFontSizeIndex + 1];
-
-              editor.execCommand("FontSize", false, newFontSize);
+              HOTKEYS_COMMAND["IncreaseFontSize"](editor);
             }
           );
 
           // cmd + '-'
           editor.addShortcut(
-            "meta+shift+189",
+            HOTKEYS_PATTERN["DecreaseFontSize"],
             "Decrease Font Size",
             function () {
-              const node = editor.selection.getNode();
-              const currentFontSize = editor.dom.getStyle(
-                node,
-                "font-size",
-                true
-              );
-
-              if (currentFontSize === "10px") {
-                return;
-              }
-
-              const currFontSizeIndex = SIZES.indexOf(
-                currentFontSize ?? "13px"
-              );
-
-              const newFontSize = SIZES[currFontSizeIndex - 1];
-
-              editor.execCommand("FontSize", false, newFontSize);
+              HOTKEYS_COMMAND["DecreaseFontSize"](editor);
             }
           );
 
           // cmd + ]
-          editor.addShortcut("meta+221", "Indent More", function () {
-            editor.execCommand("Indent");
-          });
+          editor.addShortcut(
+            HOTKEYS_PATTERN["Indent"],
+            "Indent More",
+            function () {
+              HOTKEYS_COMMAND["Indent"](editor);
+            }
+          );
 
-          // cmd + [
-          editor.addShortcut("meta+219", "Indent Less", function () {
-            editor.execCommand("Outdent");
-          });
+          //cmd + [
+          editor.addShortcut(
+            HOTKEYS_PATTERN["Outdent"],
+            "Indent Less",
+            function () {
+              HOTKEYS_COMMAND["Outdent"](editor);
+            }
+          );
         },
 
         relative_urls: false,
