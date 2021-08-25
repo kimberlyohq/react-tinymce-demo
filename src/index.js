@@ -1,23 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import App from "./App";
+import { App } from "./App";
 import reportWebVitals from "./reportWebVitals";
-/* eslint import/no-webpack-loader-syntax: off */
-import defaultValue from "!!raw-loader!./test.html";
-import { EDITOR_TYPES } from "./constants";
-import { uploadInlineImages } from "./ImageUpload/utils";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App
-      defaultValue={defaultValue}
-      type={EDITOR_TYPES.signature}
-      options={{
-        onLoadImg: () => {},
-        onUploadImg: uploadInlineImages,
-      }}
-    />
+    <App />
   </React.StrictMode>,
   document.getElementById("root")
 );

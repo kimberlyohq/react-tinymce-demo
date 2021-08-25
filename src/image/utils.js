@@ -98,9 +98,10 @@ const mockTimeout = async () => {
   });
 };
 
-export const uploadInlineImages = (editor, files) => {
-  [...files].forEach(async (file) => {
+export const uploadInlineImages = async (editor, files) => {
+  const images = [...files].map((file) => {
     const id = uuid();
+    // insert placeholder image
     editor.selection.setNode(
       editor.dom.create("img", {
         src: PHOTO_LOADING_SRC,
@@ -109,92 +110,55 @@ export const uploadInlineImages = (editor, files) => {
         height: 100,
       })
     );
-    await insertInlineImage(editor, file, id);
+    return { file, id };
   });
-};
 
-export const insertInlineImage = async (editor, file, id) => {
-  const src = URL.createObjectURL(file);
+  await mockTimeout();
 
-  try {
-    const res = await image_upload_handler(file);
-    const size = await getUploadImageSize(src);
-
-    await mockTimeout();
-
-    const cid = res.id;
-    if (cid && size) {
-      editor.dom.setAttribs(id, {
-        ...size,
-        src,
-        cid,
-        file: file.name,
+  images.forEach(({ file, id }) => {
+    const src = URL.createObjectURL(file);
+    Promise.all([image_upload_handler(file), getUploadImageSize(src)])
+      .then(([res, size]) => {
+        // replace the placeholder image with the actual image
+        editor.dom.setAttribs(id, {
+          ...size,
+          src,
+          cid: res.id,
+          file: file.name,
+        });
+      })
+      .catch((err) => {
+        // remove placeholder image if upload failed
+        editor.dom.remove(id);
       });
-    }
-  } catch (err) {
-    // remove placeholder image if upload failed
-    editor.dom.remove(id);
-  }
-};
-
-export const loadImages = (editor) => {
-  const imageNodes = editor.dom.select("img");
-
-  if (imageNodes.length === 0) {
-    return;
-  }
-
-  const isInlineImage = (node) => node.hasAttribute("data-cid");
-
-  imageNodes.forEach(async (node) => {
-    if (isInlineImage(node)) {
-      await loadInlineImage(editor, node);
-    } else {
-      loadExternalImage(node);
-    }
   });
 };
 
-const loadInlineImage = async (editor, node) => {
-  try {
-    const cid = node.getAttribute("data-cid");
-    await fetchInlineImage(node, cid);
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const fetchInlineImage = async (node, cid) => {
-  try {
-    const res = await fetch(`${FETCH_INLINE_IMAGE_URL}/${cid}`);
-    await mockTimeout();
-    const fileBlob = await res.blob();
-    const src = URL.createObjectURL(fileBlob);
-    node.setAttribute("src", src);
-    node.setAttribute("data-mce-src", src);
-    node.setAttribute("cid", cid);
-    node.removeAttribute("data-cid");
-  } catch (err) {
-    console.log(err);
-  }
+export const loadInlineImage = (node) => {
+  const cid = node.getAttribute("data-cid");
+  return fetch(`${FETCH_INLINE_IMAGE_URL}/${cid}`).then((response) =>
+    response.blob()
+  );
 };
 
 export const loadExternalImage = (node) => {
-  const dataSrc = node.getAttribute("data-src");
-  node.removeAttribute("data-src");
-  node.setAttribute("src", dataSrc);
-  node.setAttribute("data-mce-src", dataSrc);
+  return new Promise((resolve, reject) => {
+    resolve(node.getAttribute("data-src"));
+  });
 };
 
-export const uploadBase64Images = (editor, files) => {
-  [...files].forEach(async (file) => {
-    const src = URL.createObjectURL(file);
-    const size = await getUploadImageSize(src);
-    const base64Encoding = await getImageBase64(file);
+export const uploadBase64Images = async (editor, files) => {
+  const images = await Promise.all(
+    [...files].map((file) => {
+      const src = URL.createObjectURL(file);
+      return Promise.all([getUploadImageSize(src), getImageBase64(file)]);
+    })
+  );
 
+  images.forEach(([size, src]) => {
     editor.selection.setNode(
       editor.dom.create("img", {
-        src: base64Encoding,
+        src,
         ...size,
       })
     );

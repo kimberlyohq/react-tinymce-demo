@@ -6,7 +6,7 @@ import React, {
   useRef,
 } from "react";
 import { EditorContext } from "./EditorContext";
-import { uploadBase64Images } from "./ImageUpload/utils";
+import { FONT_SIZES } from "./constants";
 
 export function MarkButton({ type, children, value, onMouseDown, ...rest }) {
   const editor = useContext(EditorContext);
@@ -230,21 +230,20 @@ export const SizeButton = () => {
 
   return (
     <select value={size} onChange={handleChange}>
-      <option value="10px">Small</option>
-      <option value="13px">Normal</option>
-      <option value="18px">Large</option>
-      <option value="32px">Huge</option>
+      {FONT_SIZES.map((size, index) => (
+        <option key={index} value={size.value}>
+          {size.label}
+        </option>
+      ))}
     </select>
   );
 };
 
-export const InsertImageButton = () => {
+export const InsertImageButton = ({ onUpload }) => {
   const editor = useContext(EditorContext);
   const inputRef = useRef();
   const handleUpload = async (e) => {
-    if (!e.target.files.length) return;
-    const files = e.target.files;
-    uploadBase64Images(editor, files);
+    onUpload(e, editor);
     inputRef.current.value = "";
   };
   return (

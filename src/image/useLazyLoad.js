@@ -1,10 +1,23 @@
 import { useEffect } from "react";
 import "intersection-observer";
-import { fetchInlineImage, loadExternalImage } from "./utils";
+
+import { INLINE_IMG_ATTR, EXTERNAL_IMG_ATTR } from "./constants";
 
 const defaultConfig = { root: null, threshold: 0 };
 
-export const useLazyLoad = (editor, config = defaultConfig) => {
+export const useLazyLoad = (editor, onLoadImage, config = defaultConfig) => {
+  const setExternalImgAttribs = (node, src) => {
+    node.removeAttribute("data-src");
+    editor.dom.setAttribs(node, { src, "data-mce-src": src });
+  };
+
+  const setInlineImgAttribs = (node, blob) => {
+    const cid = node.getAttribute(INLINE_IMG_ATTR);
+    const src = URL.createObjectURL(blob);
+    editor.dom.setAttribs(node, { src, "data-mce-src": src, cid });
+    node.removeAttribute("data-cid");
+  };
+
   useEffect(() => {
     if (editor) {
       const externalImages = Array.from(editor.dom.select("img[data-src]"));
@@ -20,12 +33,17 @@ export const useLazyLoad = (editor, config = defaultConfig) => {
           if (!!node.getAttribute("src")) return;
 
           // external images
-          if (node.getAttribute("data-src")) {
-            loadExternalImage(node);
+          if (node.getAttribute(EXTERNAL_IMG_ATTR)) {
+            onLoadImage(node, EXTERNAL_IMG_ATTR).then((src) => {
+              setExternalImgAttribs(node, src);
+            });
             observer.unobserve(node);
           } else {
             // inline images
-            fetchInlineImage(node, node.getAttribute("data-cid"));
+            onLoadImage(node, INLINE_IMG_ATTR).then((blob) => {
+              setInlineImgAttribs(node, blob);
+            });
+
             observer.unobserve(node);
           }
         });
