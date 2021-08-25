@@ -48,7 +48,7 @@ export const App = () => {
     }
   };
 
-  const handleKeyDown = (event) => (editor) => {
+  const handleKeyDown = (event, editor)  => {
     const modKey = IS_MAC ? event.metaKey : event.ctrlKey;
     if (modKey && event.key === "k") {
       event.preventDefault();

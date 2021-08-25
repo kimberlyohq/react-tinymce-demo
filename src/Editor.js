@@ -207,7 +207,7 @@ export default function Editor({
           );
 
           editor.on("keydown", (event) => {
-            onKeyDown(event)(editor);
+            onKeyDown(event, editor);
           });
         },
 
