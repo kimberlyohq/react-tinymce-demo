@@ -144,9 +144,7 @@ export default function Editor({
           editor.addShortcut(
             HOTKEYS_PATTERN["Strikethrough"],
             "Strikethrough",
-            function () {
-              HOTKEYS_COMMAND["Strikethrough"](editor);
-            }
+            "Strikethrough"
           );
 
           editor.addShortcut(
@@ -196,18 +194,14 @@ export default function Editor({
           editor.addShortcut(
             HOTKEYS_PATTERN["Indent"],
             "Indent More",
-            function () {
-              HOTKEYS_COMMAND["Indent"](editor);
-            }
+            "Indent"
           );
 
           //cmd + [
           editor.addShortcut(
             HOTKEYS_PATTERN["Outdent"],
             "Indent Less",
-            function () {
-              HOTKEYS_COMMAND["Outdent"](editor);
-            }
+            "Outdent"
           );
         },
 

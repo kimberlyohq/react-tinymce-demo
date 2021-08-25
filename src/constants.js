@@ -29,7 +29,6 @@ export const HOTKEYS_PATTERN = {
 };
 
 export const HOTKEYS_COMMAND = {
-  Strikethrough: (editor) => editor.execCommand("Strikethrough"),
   NumberedList: (editor) => {
     const selection = editor.dom.getParents(editor.selection.getNode());
     const isNumberedList = selection.some((node) => node === "ol");
@@ -80,12 +79,4 @@ export const HOTKEYS_COMMAND = {
 
     editor.execCommand("FontSize", false, newFontSize);
   },
-  Indent: (editor) => {
-    editor.execCommand("Indent");
-  },
-  Outdent: (editor) => {
-    editor.execCommand("Outdent");
-  },
 };
-
-
