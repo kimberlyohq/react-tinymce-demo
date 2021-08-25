@@ -26,18 +26,20 @@ export const App = () => {
   };
 
   const handlePaste = (event, editor) => {
-    const images = event.clipboardData.files;
-    if (images.length === 0) {
+    const files = event.clipboardData.files;
+    if (files.length === 0) {
       return;
     }
     event.preventDefault();
+    const images = [...files].filter((file) => file.type.includes("image"));
     uploadInlineImages(editor, images);
   };
 
   const handleUploadImage = (event, editor) => {
     if (!event.target.files.length) return;
     const files = event.target.files;
-    uploadBase64Images(editor, files);
+    const images = [...files].filter((file) => file.type.includes("image"));
+    uploadBase64Images(editor, images);
   };
 
   const handleLoadImage = (node, type) => {
@@ -57,12 +59,13 @@ export const App = () => {
   };
 
   const handleDrop = (event, editor) => {
-    const images = event.dataTransfer.files;
-    if (images.length === 0) {
+    const files = event.dataTransfer.files;
+    if (files.length === 0) {
       return;
     }
 
     event.preventDefault();
+    const images = [...files].filter((file) => file.type.includes("image"));
     uploadInlineImages(editor, images);
   };
 
