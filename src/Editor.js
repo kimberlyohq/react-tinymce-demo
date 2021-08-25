@@ -73,6 +73,7 @@ export default function Editor({
     onPaste,
     onUploadImage,
     onLoadImage,
+    onDrop,
   },
 }) {
   const rootRef = useRef();
@@ -102,6 +103,10 @@ export default function Editor({
 
           editor.on("keydown", (event) => {
             onKeyDown(event, editor);
+          });
+
+          editor.on("drop", (event) => {
+            onDrop(event, editor);
           });
         },
         setup: (editor) => {
@@ -271,8 +276,8 @@ export default function Editor({
         },
 
         browser_spellcheck: true,
-
-        block_unsupported_drop: false,
+        block_unsupported_drop: true,
+        images_file_types: "jpg,svg,webp,png",
         images_reuse_filename: true,
         object_resizing: "img",
         images_dataimg_filter: enableImageBlobConversion,

@@ -56,6 +56,16 @@ export const App = () => {
     }
   };
 
+  const handleDrop = (event, editor) => {
+    const images = event.dataTransfer.files;
+    if (images.length === 0) {
+      return;
+    }
+
+    event.preventDefault();
+    uploadInlineImages(editor, images);
+  };
+
   return (
     <Editor
       initialValue={initialValue}
@@ -69,6 +79,7 @@ export const App = () => {
         onPaste: handlePaste,
         onUploadImage: handleUploadImage,
         onLoadImage: handleLoadImage,
+        onDrop: handleDrop,
       }}
     />
   );
