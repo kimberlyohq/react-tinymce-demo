@@ -34,7 +34,7 @@ export const App = () => {
     uploadInlineImages(editor, images);
   };
 
-  const handleUploadImage = async (event, editor) => {
+  const handleUploadImage = (event, editor) => {
     if (!event.target.files.length) return;
     const files = event.target.files;
     uploadBase64Images(editor, files);
@@ -48,7 +48,7 @@ export const App = () => {
     }
   };
 
-  const handleKeyDown = (event, editor)  => {
+  const handleKeyDown = (event, editor) => {
     const modKey = IS_MAC ? event.metaKey : event.ctrlKey;
     if (modKey && event.key === "k") {
       event.preventDefault();

@@ -50,7 +50,6 @@ export const HOTKEYS_COMMAND = {
     if (editor.selection.isCollapsed()) {
       return;
     }
-
     editor.execCommand("RemoveFormat");
   },
   IncreaseFontSize: (editor) => {
