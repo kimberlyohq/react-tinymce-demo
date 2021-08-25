@@ -32,14 +32,18 @@ export const App = () => {
     }
     event.preventDefault();
     const images = [...files].filter((file) => file.type.includes("image"));
-    uploadInlineImages(editor, images);
+    if (images.length !== 0) {
+      uploadInlineImages(editor, images);
+    }
   };
 
   const handleUploadImage = (event, editor) => {
     if (!event.target.files.length) return;
     const files = event.target.files;
     const images = [...files].filter((file) => file.type.includes("image"));
-    uploadBase64Images(editor, images);
+    if (images.length !== 0) {
+      uploadBase64Images(editor, images);
+    }
   };
 
   const handleLoadImage = (node, type) => {
@@ -60,13 +64,16 @@ export const App = () => {
 
   const handleDrop = (event, editor) => {
     const files = event.dataTransfer.files;
+
     if (files.length === 0) {
       return;
     }
 
     event.preventDefault();
     const images = [...files].filter((file) => file.type.includes("image"));
-    uploadInlineImages(editor, images);
+    if (images.length !== 0) {
+      uploadInlineImages(editor, images);
+    }
   };
 
   return (
