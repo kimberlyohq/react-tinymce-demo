@@ -13,6 +13,21 @@ export const FONT_SIZES = [
 
 export const SIZES = FONT_SIZES.map((option) => option.value);
 
+export const IS_MAC =
+  typeof window != "undefined" &&
+  /Mac|iPod|iPhone|iPad/.test(window.navigator.platform);
+
+export const HOTKEYS_PATTERN = {
+  Strikethrough: IS_MAC ? "meta+shift+X" : "ctrl+shift+X",
+  BulletedList: IS_MAC ? "meta+shift+8" : "ctrl+shift+8",
+  NumberedList: IS_MAC ? "meta+shift+7" : "ctrl+shift+7",
+  RemoveFormat: IS_MAC ? "meta+220" : "ctrl+220",
+  IncreaseFontSize: IS_MAC ? "meta+shift+187" : "ctrl+shift+187",
+  DecreaseFontSize: IS_MAC ? "meta+shift+189" : "ctrl+shift+189",
+  Indent: IS_MAC ? "meta+221" : "ctrl+221",
+  Outdent: IS_MAC ? "meta+219" : "ctrl+219",
+};
+
 export const HOTKEYS_COMMAND = {
   Strikethrough: (editor) => editor.execCommand("Strikethrough"),
   NumberedList: (editor) => {
@@ -74,17 +89,4 @@ export const HOTKEYS_COMMAND = {
   },
 };
 
-const IS_MAC =
-  typeof window != "undefined" &&
-  /Mac|iPod|iPhone|iPad/.test(window.navigator.platform);
 
-export const HOTKEYS_PATTERN = {
-  Strikethrough: IS_MAC ? "meta+shift+X" : "ctrl+shift+X",
-  BulletedList: IS_MAC ? "meta+shift+8" : "ctrl+shift+8",
-  NumberedList: IS_MAC ? "meta+shift+7" : "ctrl+shift+7",
-  RemoveFormat: IS_MAC ? "meta+220" : "ctrl+220",
-  IncreaseFontSize: IS_MAC ? "meta+shift+187" : "ctrl+shift+187",
-  DecreaseFontSize: IS_MAC ? "meta+shift+189" : "ctrl+shift+189",
-  Indent: IS_MAC ? "meta+221" : "ctrl+221",
-  Outdent: IS_MAC ? "meta+219" : "meta+219",
-};

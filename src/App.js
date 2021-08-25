@@ -2,7 +2,7 @@ import { useRef } from "react";
 import Editor from "./Editor";
 /* eslint import/no-webpack-loader-syntax: off */
 import initialValue from "!!raw-loader!./test.html";
-import { EDITOR_TYPES } from "./constants";
+import { EDITOR_TYPES, IS_MAC } from "./constants";
 import {
   uploadInlineImages,
   uploadBase64Images,
@@ -16,7 +16,7 @@ export const App = () => {
   const linkDialogRef = useRef();
   const enableImageBlobConversion = (img) => false;
 
-  const handleLinkDialog = (editor) => {
+  const handleShowLinkDialog = (editor) => {
     const isLinkedNode = isLinkNode(editor, editor.selection.getNode());
     if (isLinkedNode) {
       editor.execCommand("Unlink");
@@ -48,15 +48,24 @@ export const App = () => {
     }
   };
 
+  const handleKeyDown = (event) => (editor) => {
+    const modKey = IS_MAC ? event.metaKey : event.ctrlKey;
+    if (modKey && event.key === "k") {
+      event.preventDefault();
+      handleShowLinkDialog(editor);
+    }
+  };
+
   return (
     <Editor
       initialValue={initialValue}
       type={EDITOR_TYPES.signature}
       linkDialogRef={linkDialogRef}
+      onKeyDown={handleKeyDown}
       options={{
         enableImageBlobConversion: enableImageBlobConversion,
         enableInsertImageButton: true,
-        onShowLinkDialog: handleLinkDialog,
+        onShowLinkDialog: handleShowLinkDialog,
         onPaste: handlePaste,
         onUploadImage: handleUploadImage,
         onLoadImage: handleLoadImage,

@@ -145,10 +145,6 @@ export default function Editor({
             }
           );
 
-          editor.addShortcut("meta+k", "Insert link", function () {
-            onShowLinkDialog(editor);
-          });
-
           editor.addShortcut(
             HOTKEYS_PATTERN["NumberedList"],
             "Numbered List",
@@ -209,6 +205,10 @@ export default function Editor({
               HOTKEYS_COMMAND["Outdent"](editor);
             }
           );
+
+          editor.on("keydown", (event) => {
+            onKeyDown(event)(editor);
+          });
         },
 
         relative_urls: false,
