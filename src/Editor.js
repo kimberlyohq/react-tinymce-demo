@@ -1,4 +1,3 @@
-import "./App.css";
 import { useRef, useEffect, useState } from "react";
 import tinymce from "tinymce/tinymce";
 import "tinymce/themes/silver";
@@ -115,6 +114,7 @@ export default function Editor({
           editor.ui.registry.addButton("linkedit", {
             text: "edit link",
             onAction: () => {
+              editor.focus(false);
               const linkNode = getLinkNode(editor);
               const linkContent = linkNode.text;
               const linkHref = linkNode.getAttribute("href");
